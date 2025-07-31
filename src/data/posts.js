@@ -10,5 +10,23 @@ export const posts = [
     title: "Top 5 Gaming Mice of 2025",
     excerpt: "Check out the best gaming mice of the year with pros and cons.",
     content: "Detailed comparison of gaming mice..."
+  },
+  {
+    slug: "top-5-gaming-mouse-4",
+    title: "Top 5 Gaming Mice of 2025",
+    excerpt: "Check out the best gaming mice of the year with pros and cons.",
+    content: "Detailed comparison of gaming mice..."
+  },
+  {
+    slug: "top-5-gaming-mouse-2",
+    title: "Top 5 Gaming Mice of 2025",
+    excerpt: "Check out the best gaming mice of the year with pros and cons.",
+    content: "Detailed comparison of gaming mice..."
+  },
+  {
+    slug: "top-5-gaming-mouse-3",
+    title: "Top 5 Gaming Mice of 2025",
+    excerpt: "Check out the best gaming mice of the year with pros and cons.",
+    content: "Detailed comparison of gaming mice..."
   }
 ];
