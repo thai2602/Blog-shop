@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 const CreateBlog = () => {
   const navigate = useNavigate();
@@ -28,13 +30,24 @@ const CreateBlog = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Blog submitted:', formData);
 
-    // Sau khi xử lý xong có thể gửi form và ảnh lên server (nếu cần)
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('summary', formData.summary);
+    data.append('content', formData.content);
+    if (formData.image) data.append('image', formData.image);
 
-    navigate("/Blog");
+    try {
+      await axios.post('http://localhost:5000/posts', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      navigate('/Blog');
+    } catch (err) {
+      console.error('Lỗi khi gửi bài viết:', err);
+    }
+    
   };
 
   return (

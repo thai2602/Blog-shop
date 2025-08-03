@@ -1,32 +1,7 @@
-export const posts = [
-  {
-    slug: "how-to-choose-laptop",
-    title: "How to Choose the Right Laptop",
-    excerpt: "A quick guide to help you pick a perfect laptop for your needs.",
-    content: "Full content of the blog post goes here..."
-  },
-  {
-    slug: "top-5-gaming-mouse",
-    title: "Top 5 Gaming Mice of 2025",
-    excerpt: "Check out the best gaming mice of the year with pros and cons.",
-    content: "Detailed comparison of gaming mice..."
-  },
-  {
-    slug: "top-5-gaming-mouse-4",
-    title: "Top 5 Gaming Mice of 2025",
-    excerpt: "Check out the best gaming mice of the year with pros and cons.",
-    content: "Detailed comparison of gaming mice..."
-  },
-  {
-    slug: "top-5-gaming-mouse-2",
-    title: "Top 5 Gaming Mice of 2025",
-    excerpt: "Check out the best gaming mice of the year with pros and cons.",
-    content: "Detailed comparison of gaming mice..."
-  },
-  {
-    slug: "top-5-gaming-mouse-3",
-    title: "Top 5 Gaming Mice of 2025",
-    excerpt: "Check out the best gaming mice of the year with pros and cons.",
-    content: "Detailed comparison of gaming mice..."
+export const fetchPosts = async () => {
+  const response = await fetch("http://localhost:5000/posts");
+  if (!response.ok) {
+    throw new Error("Failed to fetch posts");
   }
-];
+  return response.json();
+};
