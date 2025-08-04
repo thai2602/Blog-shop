@@ -1,7 +1,7 @@
 // server/routes/posts.js
 import express from 'express';
 import multer from 'multer';
-import Post from '../models/Post.js';
+import Post from '../models/posts.js';
 import slugify from 'slugify';
 
 const router = express.Router();
@@ -36,5 +36,17 @@ router.post('/', upload.single('image'), async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi tạo bài viết' });
   }
 });
+
+// GET /posts
+router.get('/', async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách bài viết:', error);
+    res.status(500).json({ message: 'Lỗi khi lấy danh sách bài viết' });
+  }
+});
+
 
 export default router;
