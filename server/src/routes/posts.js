@@ -3,17 +3,25 @@ import express from 'express';
 import multer from 'multer';
 import Post from '../models/posts.js';
 import slugify from 'slugify';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Xác định __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Cấu hình nơi lưu trữ ảnh (tạm lưu trong local)
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + '-' + file.originalname),
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), 'uploads'); 
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage }); 
+
 
 // POST /posts
 router.post('/', upload.single('image'), async (req, res) => {
@@ -48,5 +56,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /posts/:slug
+router.get('/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const post = await Post.findOne({ slug });
+    if (!post) {
+      return res.status(404).json({ message: 'Không tìm thấy bài viết' });
+    }
+    res.json(post);
+  } catch (error) {
+    console.error('Lỗi khi lấy bài viết theo slug:', error);
+    res.status(500).json({ message: 'Lỗi server' });
+  }
+});
 
 export default router;
