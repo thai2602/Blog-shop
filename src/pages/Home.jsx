@@ -13,7 +13,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-8 p-4">
+    <div id = "home-page" className="space-y-8 p-4">
       <section>
         <h2 className="text-xl font-bold mb-4">Featured Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

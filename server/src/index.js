@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import postsRouter from './routes/posts.js';
+import productsRouter from './routes/products.js';
 import connectDB from './db.js'; 
 import path from 'path';
 import fs from 'fs';
@@ -22,6 +23,8 @@ if (!fs.existsSync(uploadDir)) {
 app.use('/uploads', express.static(uploadDir));
 
 app.use('/posts', postsRouter);
+
+app.use('/products', productsRouter);
 
 //  Gọi kết nối DB và chạy server
 connectDB().then(() => {

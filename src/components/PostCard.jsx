@@ -5,7 +5,7 @@ const PostCard = ({ post }) => {
   if (!post || !post.content) return null;
 
   return (
-    <div className="border p-4 rounded shadow hover:shadow-lg">
+    <div id = "PostCard" className="border p-4 rounded shadow hover:shadow-lg">
       <img src={post.image 
             ? `http://localhost:5000${post.image}`
             : defaultImg } 
@@ -19,7 +19,7 @@ const PostCard = ({ post }) => {
           : post.content}
       </p>
 
-      <Link to={`/blog/${post.slug || post._id}`} className="text-blue-500 mt-2 inline-block">
+      <Link to={`/blog/${post.slug || post._id}`} className="bg-orange-500 hover:opacity-75 mt-2 p-2 rounded text-white font-semibold inline-block">
         Đọc tiếp →
       </Link>
     </div>

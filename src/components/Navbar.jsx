@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => (
-  <nav className="fixed w-full bg-gray-800 text-white p-4 flex items-center ">
+  <nav id = "navbar" className="fixed w-full bg-gray-800 text-white p-4 flex items-center ">
     <h1 className="font-bold text-xl p-1"><Link to="/">BlogShop</Link></h1>
     <div className='search-bar pl-4 pr-4 text-black'>
 

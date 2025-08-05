@@ -1,0 +1,90 @@
+import express from 'express';
+import multer from 'multer';
+import Product from '../models/products.js'; 
+import slugify from 'slugify';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+console.log('📦 Đã load file products.js');
+
+// Xác định __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const router = express.Router();
+
+// Cấu hình multer để lưu file ảnh
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), 'uploads');
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+});
+
+const upload = multer({ storage });
+
+// POST /products - Thêm sản phẩm mới
+router.post('/', upload.single('image'), async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      details,
+      price,
+      quantity,
+      category,
+      isFeatured
+    } = req.body;
+
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+
+    const newProduct = new Product({
+      name,
+      description,
+      details,
+      price,
+      quantity,
+      category,
+      isFeatured: isFeatured === 'true', // vì từ form gửi lên là string
+      image: imageUrl,
+      slug: slugify(name, { lower: true, strict: true }),
+    });
+
+    await newProduct.save();
+    res.status(201).json(newProduct);
+  } catch (error) {
+    console.error('Lỗi khi tạo sản phẩm:', error);
+    res.status(500).json({ message: 'Lỗi khi tạo sản phẩm' });
+  }
+});
+
+// GET /products - Lấy danh sách sản phẩm
+router.get('/', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách sản phẩm:', error);
+    res.status(500).json({ message: 'Lỗi khi lấy danh sách sản phẩm' });
+  }
+});
+
+// GET /products/:slug - Lấy chi tiết sản phẩm theo slug
+router.get('/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const product = await Product.findOne({ slug });
+
+    if (!product) {
+      return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Lỗi khi lấy sản phẩm theo slug:', error);
+    res.status(500).json({ message: 'Lỗi server' });
+  }
+});
+
+export default router;
