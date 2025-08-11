@@ -27,7 +27,7 @@ const BlogDetail = () => {
   if (!post) return <p>Loading...</p>;
 
   return (
-    <div id = "blog-detail-page" className="flex flex-col mx-64 mt-8">
+    <div id = "blog-detail-page" className="flex flex-col mx-64 mt-8 shadow rounded">
 
       <div
         className="w-full h-80 bg-cover bg-center relative rounded-lg overflow-hidden shadow"
@@ -35,10 +35,8 @@ const BlogDetail = () => {
           backgroundImage: `url(${post.image ? `http://localhost:5000${post.image}` : defaultImg})`,
         }}
       >
-        {/* Overlay đen mờ */}
-        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-        {/* Nội dung nằm trên ảnh */}
         <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-10">
           <p className="text-sm text-gray-300">{new Date(post.createdAt).toDateString()}</p>
           <h2 className="text-2xl font-semibold leading-snug mb-3">{post.title}</h2>
@@ -56,7 +54,7 @@ const BlogDetail = () => {
         </div>
       </div>
 
-      <div className="blog-title mx-4"> 
+      <div className="blog-title mx-8 mt-4"> 
         <h2 className="text-2xl font-bold">{post.title}</h2>
         <p className="mt-4 text-gray-700 whitespace-pre-line">{post.content}</p>
       </div>

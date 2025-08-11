@@ -5,12 +5,12 @@ const PostCard = ({ post }) => {
   if (!post || !post.content) return null;
 
   return (
-    <div id = "PostCard" className="border p-4 rounded shadow hover:shadow-lg">
+    <Link to={`/blog/${post.slug || post._id}`} id = "PostCard" className="border p-4 rounded shadow hover:shadow-lg inline-block">
       <img src={post.image 
-            ? `http://localhost:5000${post.image}`
-            : defaultImg } 
-            alt={post.title} className="mb-3 w-full h-48 object-cover rounded" />
-            
+          ? `http://localhost:5000${post.image}`
+          : defaultImg } 
+          alt={post.title} className="mb-3 w-full h-48 object-cover rounded" />
+          
       <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
 
       <p className="text-gray-600">
@@ -18,12 +18,11 @@ const PostCard = ({ post }) => {
           ? `${post.content.slice(0, 100)}...`
           : post.content}
       </p>
-
-      <Link to={`/blog/${post.slug || post._id}`} className="bg-orange-500 hover:opacity-75 mt-2 p-2 rounded text-white font-semibold inline-block">
-        Đọc tiếp →
-      </Link>
-    </div>
-  );
+    </Link>
+    );
 };
 
 export default PostCard;
+
+
+

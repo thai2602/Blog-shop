@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import postsRouter from './routes/posts.js';
 import productsRouter from './routes/products.js';
+import userRoutes from './routes/users.js';
 import connectDB from './db.js'; 
 import path from 'path';
 import fs from 'fs';
@@ -26,6 +27,7 @@ app.use('/posts', postsRouter);
 
 app.use('/products', productsRouter);
 
+app.use('/users', userRoutes);
 //  Gọi kết nối DB và chạy server
 connectDB().then(() => {
   app.listen(5000, () => console.log('🚀 Server listening at http://localhost:5000'));
