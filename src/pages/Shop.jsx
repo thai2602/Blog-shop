@@ -31,7 +31,7 @@ const Shop = () => {
     <div id="shop-page" className="p-4">
       <div className='shop-info flex'>
         <h2 className="text-2xl font-bold mb-4">Shop</h2>
-
+        
       </div>
           
       <div className="shop flex">

@@ -5,11 +5,11 @@ import { CiUser } from "react-icons/ci";
 
 
 const Navbar = () => (
-  <nav id = "navbar" className="fixed w-full bg-white text-black h-16 p-4 flex items-center z-50">
+  <nav id = "navbar" className="fixed w-full bg-white text-black h-20 p-4 flex items-center z-50">
     <h1 className="font-bold text-2xl p-1"><Link to="/">BlogShop</Link></h1>
-    <div className='search-bar pl-4 pr-4 text-black'>
-      <div>
-        <form className="flex w-80 hover:border rounded-full">
+    <div className='search-bar pl-4 pr-4 h-full items-center text-black'>
+      <div className='h-full py-1'>
+        <form className="flex w-80 h-full focus-within:border-2 hover:border-2 rounded-full ">
           <input 
             type="text" 
             placeholder="Tìm kiếm..." 

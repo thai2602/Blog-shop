@@ -20,7 +20,7 @@ function App() {
   return (
       <div className="flex flex-col min-h-screen">
         {!hideLayout && <Navbar />}
-        <main className={`flex-1 p-4 ${!hideLayout ? 'mt-16' : ''}`}>
+        <main className={`flex-1 p-4 ${!hideLayout ? 'mt-20' : ''}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />

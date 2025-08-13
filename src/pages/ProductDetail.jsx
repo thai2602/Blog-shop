@@ -4,7 +4,7 @@ import axios from 'axios';
 import defaultImg from '../assets/default-img.jpg';
 
 const ProductDetail = () => {
-  const { slug } = useParams();  // dùng slug thay vì id
+  const { slug } = useParams();  
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 

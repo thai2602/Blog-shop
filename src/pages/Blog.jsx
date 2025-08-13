@@ -13,23 +13,27 @@ const Blog = () => {
   }, []);
 
   return (
-    <div id = "blog-page" className="main-blog ml-24 mr-24 mb-4">
+    <div id = "blog-page" className="main-blog mx-32 mb-4 font-sans">
       <h2 className="text-2xl font-bold mb-4">Popular</h2>
-      <div className="page flex">
-        <div className="main-page w-3/5">
+      <div className="page flex w-full">
+        <div className="main-page w-5/6 pr-12">
           <div className="grid grid-cols-1 gap-4">
             {posts.map(post => (
               <PostCard key={post._id} post={post} />
             ))}
           </div>
         </div>
-        <div className="sub-page w-2/5">
-          <ul className="px-4 flex-col gap-y-4">
-            <li>Những lời hứa bỏ quên</li>
-            <li>Những lời hứa bỏ quên</li>
-            <li>Những lời hứa bỏ quên</li>
-            <li>Những lời hứa bỏ quên</li>
-          </ul>
+        <div className="sub-page w-1/6">
+          <div className='w-full pb-2 text-xl'>Categories</div>
+            <ul className="flex-col gap-y-4 w-fit">
+              <li className='hover:font-semibold'><Link>Foods</Link></li>
+              <li className='hover:font-semibold'><Link>Drinks</Link></li>
+              <li className='hover:font-semibold'><Link>Trips</Link></li>
+              <li className='hover:font-semibold'><Link>Spring</Link></li>
+              <li className='hover:font-semibold'><Link>Summer</Link></li>
+              <li className='hover:font-semibold'><Link>Autumn</Link></li>
+              <li className='hover:font-semibold'><Link>Winter</Link></li>
+            </ul>
         </div>
       </div>
 
