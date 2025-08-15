@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import defaultImg from '../assets/default-img.jpg';
+import API_URL from '../config';
 
 const PostCard = ({ post }) => {
   if (!post || !post.content) return null;
@@ -7,7 +8,7 @@ const PostCard = ({ post }) => {
   return (
     <Link to={`/blog/${post.slug || post._id}`} id = "PostCard" className="border p-4 rounded shadow hover:shadow-lg inline-block">
       <img src={post.image 
-          ? `http://localhost:5000${post.image}`
+          ? `${API_URL}${post.image}`
           : defaultImg } 
           alt={post.title} className="mb-3 w-full h-48 object-cover rounded" />
           

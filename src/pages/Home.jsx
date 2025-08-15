@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { products } from '../data/products'; 
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/posts')
+    axios.get(`${API_URL}/posts`)
       .then(res => setPosts(res.data))
       .catch(err => console.error('Lỗi khi tải bài viết:', err));
   }, []);

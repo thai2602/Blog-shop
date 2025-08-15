@@ -1,4 +1,3 @@
-// server/models/Post.js
 import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
@@ -7,6 +6,11 @@ const postSchema = new mongoose.Schema({
   content: { type: String, required: true },
   image: { type: String, default: '' },
   slug: { type: String, required: true, unique: true },
+  categories: [ {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Category' ,
+    required: true 
+  } ],
   createdAt: {
     type: Date,
     default: Date.now

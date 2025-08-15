@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -17,6 +18,15 @@ const AddProduct = () => {
   });
 
   const [preview, setPreview] = useState(null);
+
+  // 📌 Lấy danh mục khi load trang
+  useEffect(() => {
+    axios.get("http://localhost:5000/productCategories")
+      .then(res => {
+        setCategories(res.data);
+      })
+      .catch(err => console.error("❌ Lỗi khi tải categories:", err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -38,14 +48,9 @@ const AddProduct = () => {
     e.preventDefault();
 
     const data = new FormData();
-    data.append('name', formData.name);
-    data.append('description', formData.description);
-    data.append('details', formData.details);
-    data.append('price', formData.price);
-    data.append('quantity', formData.quantity);
-    data.append('category', formData.category);
-    data.append('isFeatured', formData.isFeatured);
-    if (formData.image) data.append('image', formData.image);
+    Object.entries(formData).forEach(([key, value]) => {
+      data.append(key, value);
+    });
 
     try {
       await axios.post('http://localhost:5000/products', data, {
@@ -115,15 +120,24 @@ const AddProduct = () => {
           />
         </div>
 
-        <input
-          type="text"
-          name="category"
-          placeholder="Danh mục"
-          value={formData.category}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
+        <div>
+          <label className="block font-medium mb-1">Danh mục</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border border-gray-300 rounded"
+          >
+            <option value="">Chọn danh mục</option>
+            {categories.map(cat => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+
+        </div>
 
         <div className="flex items-center gap-2">
           <input

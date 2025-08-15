@@ -33,7 +33,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       details,
       price,
       quantity,
-      category,
+      category, 
       isFeatured
     } = req.body;
 
@@ -46,23 +46,30 @@ router.post('/', upload.single('image'), async (req, res) => {
       price,
       quantity,
       category,
-      isFeatured: isFeatured === 'true', // vì từ form gửi lên là string
+      isFeatured: isFeatured === 'true',
       image: imageUrl,
       slug: slugify(name, { lower: true, strict: true }),
     });
 
     await newProduct.save();
-    res.status(201).json(newProduct);
+
+    const populatedProduct = await newProduct.populate('category', 'name slug');
+
+    res.status(201).json(populatedProduct);
   } catch (error) {
     console.error('Lỗi khi tạo sản phẩm:', error);
     res.status(500).json({ message: 'Lỗi khi tạo sản phẩm' });
   }
 });
 
+
 // GET /products - Lấy danh sách sản phẩm
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find()
+      .populate('category', 'name slug') // Lấy tên + slug của category
+      .sort({ createdAt: -1 });
+
     res.json(products);
   } catch (error) {
     console.error('Lỗi khi lấy danh sách sản phẩm:', error);
@@ -70,11 +77,13 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 // GET /products/:slug - Lấy chi tiết sản phẩm theo slug
 router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
-    const product = await Product.findOne({ slug });
+    const product = await Product.findOne({ slug })
+    .populate('category', 'name slug');
 
     if (!product) {
       return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });

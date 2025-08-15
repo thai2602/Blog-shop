@@ -2,39 +2,86 @@ import React, { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config';
+
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/posts')
+    axios.get(`${API_URL}/posts`)
       .then(res => setPosts(res.data))
       .catch(err => console.error('Lỗi khi tải bài viết:', err));
   }, []);
 
+    useEffect(() => {
+    axios.get(`${API_URL}/categories`)
+      .then(res => {
+        setCategories(res.data)
+      })
+      .catch(err => console.error('Lỗi khi tải categories:', err));
+  }, []);
+
+  const filteredPosts = selectedCategory
+    ? posts.filter(post =>
+        post.categories?.some(cat => cat.slug === selectedCategory)
+      )
+    : posts;
+
   return (
-    <div id = "blog-page" className="main-blog mx-32 mb-4 font-sans">
-      <h2 className="text-2xl font-bold mb-4">Popular</h2>
+    <div id="blog-page" className="main-blog mx-32 mb-4 font-sans">
+      <h2 className="text-2xl font-bold mb-4 capitalize">
+        {selectedCategory ? `Related: ${selectedCategory}` : "Popular"}
+      </h2>
+
       <div className="page flex w-full">
         <div className="main-page w-5/6 pr-12">
           <div className="grid grid-cols-1 gap-4">
-            {posts.map(post => (
-              <PostCard key={post._id} post={post} />
-            ))}
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map(post => (
+                <PostCard key={post._id} post={post} />
+              ))
+            ) : (
+              <p>No posts found for this category.</p>
+            )}
           </div>
         </div>
-        <div className="sub-page w-1/6">
-          <div className='w-full pb-2 text-xl'>Categories</div>
-            <ul className="flex-col gap-y-4 w-fit">
-              <li className='hover:font-semibold'><Link>Foods</Link></li>
-              <li className='hover:font-semibold'><Link>Drinks</Link></li>
-              <li className='hover:font-semibold'><Link>Trips</Link></li>
-              <li className='hover:font-semibold'><Link>Spring</Link></li>
-              <li className='hover:font-semibold'><Link>Summer</Link></li>
-              <li className='hover:font-semibold'><Link>Autumn</Link></li>
-              <li className='hover:font-semibold'><Link>Winter</Link></li>
-            </ul>
-        </div>
+
+<div className="sub-page w-1/6">
+  <div className="w-full pb-2 text-xl font-semibold border-b border-gray-300 mb-3">
+    Categories
+  </div>
+  <ul className="space-y-1">
+    {categories.map(cat => (
+      <li key={cat._id}>
+        <button
+          type="button"
+          onClick={() => setSelectedCategory(cat.slug)}
+          className={`block w-full text-left px-2 py-1 rounded-md transition duration-200
+            ${selectedCategory === cat.slug 
+              ? "font-semibold text-black" 
+              : "text-gray-700 hover:font-semibold hover:scale-[1.02]"}`}
+        >
+          {cat.name}
+        </button>
+      </li>
+    ))}
+    <li>
+      <button
+        type="button"
+        onClick={() => setSelectedCategory(null)}
+        className={`block w-full text-left px-2 py-1 rounded-md transition duration-200
+          ${selectedCategory === null
+            ? "font-semibold text-black"
+            : "text-gray-700 hover:font-semibold hover:scale-[1.02]"}`}
+      >
+        Show All
+      </button>
+    </li>
+  </ul>
+</div>
       </div>
 
         <div id = "create-blog-btn" className="w-fit text-white font-semibold p-2 bg-green-600 hover:opacity-75 mx-4 my-2 rounded-lg"> 
@@ -46,3 +93,7 @@ const Blog = () => {
 };
 
 export default Blog;
+
+// useEffect(() => {
+// console.log("Posts from API:", posts);
+// }, [posts]);

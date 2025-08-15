@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
   quantity: { type: Number, required: true, min: 0 },             
   image: { type: String, default: '' },                         
   images: [{ type: String }],                                     
-  category: { type: String, required: true },                    
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductCategory', required: true },                    
   slug: { type: String, required: true, unique: true },           
   isFeatured: { type: Boolean, default: false },                  
   createdAt: { type: Date, default: Date.now }                    

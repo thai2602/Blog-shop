@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import defaultImg from '../assets/default-img.jpg'
 import RelatedBlogsVertical from '../sub/RelatedBlog'
+import API_URL from '../config'
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -13,10 +14,10 @@ export default function BlogDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/posts/${slug}`);
+        const { data } = await axios.get(`${API_URL}/posts/${slug}`);
         setPost(data); 
 
-        const { data: allPosts } = await axios.get(`http://localhost:5000/posts`);
+        const { data: allPosts } = await axios.get(`${API_URL}/posts`);
         if (Array.isArray(allPosts)) {
           const filtered = allPosts
             .filter(p => p.slug !== slug) 
@@ -35,9 +36,9 @@ export default function BlogDetail() {
 
   if (error) return <p className="text-red-500">{error}</p>;
   if (!post) return <p>Loading...</p>;
-
+  
   const bgUrl = post.image
-    ? (post.image.startsWith('http') ? post.image : `http://localhost:5000${post.image}`)
+    ? (post.image.startsWith('http') ? post.image : `${API_URL}${post.image}`)
     : defaultImg;
 
   return (
@@ -61,9 +62,11 @@ export default function BlogDetail() {
                   Featured
                 </span>
               )}
-              <span className="px-3 py-1 bg-white/90 text-gray-800 text-xs rounded-full">
-                {post.category}
-              </span>
+                {post?.categories?.map(c => (
+                  <span key={c._id} className="px-3 py-1 bg-white/90 text-gray-800 text-xs rounded-full">
+                    {c.name}
+                  </span>
+                ))}
             </div>
             <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded w-max">
               Intro
@@ -76,7 +79,6 @@ export default function BlogDetail() {
         </div>
       </div>
 
-      {/* Related blogs sidebar */}
       <div className="w-60">
         <RelatedBlogsVertical posts={relatedPosts} />
       </div>
