@@ -31,15 +31,15 @@ Create a `.env` file before running the project.
 ## Project Structure
 ```
 /sever
-/models
-/routes
-db.js
-index.js
+   /models
+   /routes
+   db.js
+   index.js
 /src
-/blog-create
-/components
-/pages
-/sub
-/users
+   /blog-create
+   /components
+   /pages
+   /sub
+   /users
 
  
