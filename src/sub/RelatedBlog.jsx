@@ -11,7 +11,7 @@ export default function RelatedBlogsVertical({ posts = [], title = 'Related Blog
   }
   
   return (
-    <aside className="w-full max-w-md">
+    <aside className="w-full max-w-md shadow-md ">
       <h3 className="text-lg font-semibold mb-3 px-3">{title}</h3>
 
       <div className="flex flex-col gap-3">

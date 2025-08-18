@@ -5,15 +5,11 @@ import slugify from 'slugify';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-console.log('📦 Đã load file products.js');
-
-// Xác định __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Cấu hình multer để lưu file ảnh
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(process.cwd(), 'uploads');
@@ -24,7 +20,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// POST /products - Thêm sản phẩm mới
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const {
@@ -63,11 +58,10 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 
-// GET /products - Lấy danh sách sản phẩm
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find()
-      .populate('category', 'name slug') // Lấy tên + slug của category
+      .populate('category', 'name slug') 
       .sort({ createdAt: -1 });
 
     res.json(products);
@@ -78,7 +72,6 @@ router.get('/', async (req, res) => {
 });
 
 
-// GET /products/:slug - Lấy chi tiết sản phẩm theo slug
 router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;

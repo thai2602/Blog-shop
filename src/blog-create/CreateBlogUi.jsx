@@ -16,7 +16,6 @@ const CreateBlog = () => {
   });
   const [preview, setPreview] = useState(null);
 
-  // Lấy danh sách category từ server
   useEffect(() => {
     axios.get('http://localhost:5000/categories')
       .then(res => setCategories(res.data))
@@ -69,7 +68,7 @@ const CreateBlog = () => {
       <h2 className="text-2xl font-bold mb-6 text-center">Tạo Bài Viết Mới</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Tiêu đề */}
+
         <div>
           <label className="block font-medium mb-1">Tiêu đề</label>
           <input
@@ -82,7 +81,6 @@ const CreateBlog = () => {
           />
         </div>
 
-        {/* Mô tả */}
         <div>
           <label className="block font-medium mb-1">Mô tả ngắn</label>
           <textarea
@@ -95,7 +93,6 @@ const CreateBlog = () => {
           />
         </div>
 
-        {/* Nội dung */}
         <div>
           <label className="block font-medium mb-1">Nội dung</label>
           <textarea

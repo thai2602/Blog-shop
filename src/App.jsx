@@ -12,13 +12,14 @@ import AddProduct from './blog-create/AddProducts';
 import Login from './users/login';
 import Register from './users/register';
 import Profile from './users/userprofile';
+import ShopHomePage from './pages/Shop-HomePage';
 
 function App() {
   const location = useLocation();
   const hideLayout = ['/login', '/register'].includes(location.pathname);
 
   return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-white">
         {!hideLayout && <Navbar />}
         <main className={`flex-1 p-4 ${!hideLayout ? 'mt-20' : ''}`}>
           <Routes>
@@ -32,6 +33,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/shophomepage" element={<ShopHomePage />} />
           </Routes>
         </main>
         {!hideLayout && <Footer />}

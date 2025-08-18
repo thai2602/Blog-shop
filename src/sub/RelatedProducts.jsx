@@ -4,7 +4,6 @@ import defaultImg from '../assets/default-img.jpg'
 import API_URL from '../config'
 
 export default function RelatedProductsVertical({ products = [], title = 'Related Products' }) {
-  // Hàm xử lý ảnh an toàn
   const getImageUrl = (img) => {
     if (!img) return defaultImg
     return img.startsWith('http') ? img : `${API_URL}${img}`

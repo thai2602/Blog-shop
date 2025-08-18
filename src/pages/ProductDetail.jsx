@@ -14,11 +14,9 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Lấy chi tiết sản phẩm
         const { data } = await axios.get(`${API_URL}/products/${slug}`)
         setProduct(data)
 
-        // Lấy toàn bộ sản phẩm để lọc sản phẩm liên quan
         const { data: allProducts } = await axios.get(`${API_URL}/products`)
 
         if (Array.isArray(allProducts)) {
@@ -52,7 +50,6 @@ export default function ProductDetail() {
 
   return (
     <div id="product-detail-page" className="flex flex-col lg:flex-row mx-64 mt-8 gap-8">
-      {/* Thông tin sản phẩm */}
       <div className="flex-1 shadow rounded bg-white p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <img
@@ -82,8 +79,7 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Sản phẩm liên quan */}
-      <div className="w-60">
+      <div className="w-60 bg-white shadow">
         <RelatedProductsVertical products={relatedProducts} />
       </div>
     </div>

@@ -19,13 +19,12 @@ const AddProduct = () => {
 
   const [preview, setPreview] = useState(null);
 
-  // 📌 Lấy danh mục khi load trang
   useEffect(() => {
     axios.get("http://localhost:5000/productCategories")
       .then(res => {
         setCategories(res.data);
       })
-      .catch(err => console.error("❌ Lỗi khi tải categories:", err));
+      .catch(err => console.error("Lỗi khi tải categories:", err));
   }, []);
 
   const handleChange = (e) => {
@@ -56,10 +55,10 @@ const AddProduct = () => {
       await axios.post('http://localhost:5000/products', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      alert('✅ Thêm sản phẩm thành công!');
+      alert('Thêm sản phẩm thành công!');
       navigate('/shop'); 
     } catch (err) {
-      console.error('❌ Lỗi khi thêm sản phẩm:', err);
+      console.error('Lỗi khi thêm sản phẩm:', err);
       alert('Lỗi khi gửi sản phẩm lên server!');
     }
   };
