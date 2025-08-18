@@ -1,6 +1,7 @@
 # Blog-shop
 
-A web application for shopping and blogging, built with **React, Vite, Tailwind, Node.js, Express, MongoDB**.
+- The purpose of Blog-shop is to provide small shop owners with a dedicated platform to showcase their passion in a professional and organized way, rather than through scattered posts on social media. It also allows customers to better appreciate that dedication, thereby increasing trust and credibility 
+- Built with **React, Vite, Tailwind, Node.js, Express, MongoDB**.
 
 ## Technologies
 - Frontend: React + Vite + Tailwind
