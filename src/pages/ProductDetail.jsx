@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import axios from 'axios'
-import defaultImg from '../assets/default-img.jpg'
-import RelatedProductsVertical from '../sub/RelatedProducts'
-import API_URL from '../config'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import defaultImg from '../assets/default-img.jpg';
+import RelatedProductsVertical from '../sub/RelatedProducts';
+import { API_URL } from '../config';
+import api from '../lib/api';
 
 export default function ProductDetail() {
-  const { slug } = useParams()
-  const [product, setProduct] = useState(null)
-  const [relatedProducts, setRelatedProducts] = useState([])
-  const [error, setError] = useState(null)
+  const { slug } = useParams();
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/products/${slug}`)
-        setProduct(data)
+        setLoading(true);
+        const { data } = await api.get(`/products/${slug}`);
+        setProduct(data);
 
-        const { data: allProducts } = await axios.get(`${API_URL}/products`)
-
+        const { data: allProducts } = await api.get(`/products`);
         if (Array.isArray(allProducts)) {
           const filtered = allProducts
             .filter(
-              p =>
+              (p) =>
                 p.slug !== slug &&
                 String(p.category?._id) === String(data.category?._id)
             )
@@ -32,56 +33,99 @@ export default function ProductDetail() {
           setRelatedProducts([]);
         }
       } catch (err) {
-        console.error(err)
-        setError(err.response?.data?.message || 'Load failed.')
+        console.error(err);
+        setError(err?.response?.data?.message || 'Load failed.');
+      } finally {
+        setLoading(false);
       }
-    }
-    fetchData()
-  }, [slug])
+    })();
+  }, [slug]);
 
-  if (error) return <p className="text-red-500">{error}</p>
-  if (!product) return <p>Loading...</p>
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  if (loading) {
+    return (
+      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <div className="grid md:grid-cols-2 gap-6 animate-pulse">
+            <div className="rounded-xl bg-gray-200 aspect-square" />
+            <div className="space-y-4">
+              <div className="h-8 w-2/3 bg-gray-200 rounded" />
+              <div className="h-6 w-1/3 bg-gray-200 rounded" />
+              <div className="h-4 w-full bg-gray-200 rounded" />
+              <div className="h-4 w-5/6 bg-gray-200 rounded" />
+            </div>
+          </div>
+        </div>
+        <aside className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 h-[400px]" />
+      </div>
+    );
+  }
+
+  if (!product) return null;
 
   const imgUrl = product.image
-    ? product.image.startsWith('http')
-      ? product.image
-      : `${API_URL}${product.image}`
-    : defaultImg
+    ? (product.image.startsWith('http') ? product.image : `${API_URL}${product.image}`)
+    : defaultImg;
 
   return (
-    <div id="product-detail-page" className="flex flex-col lg:flex-row mx-64 mt-8 gap-8">
-      <div className="flex-1 shadow rounded bg-white p-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          <img
-            src={imgUrl}
-            alt={product.name}
-            className="w-full md:w-1/2 object-cover rounded-lg"
-            onError={(e) => (e.target.src = defaultImg)}
-          />
-          <div>
-            <h2 className="text-3xl font-bold mb-3">{product.name}</h2>
-            <p className="text-xl text-green-600 font-semibold mb-2">
-              {product.price?.toLocaleString('vi-VN')} VNĐ
+
+    <div id="product-detail-page" className="grid gap-8 lg:grid-cols-[1fr_320px]">
+
+      <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div className="grid md:grid-cols-2 gap-6">
+
+          <div className="rounded-xl overflow-hidden bg-gray-100">
+            <img
+              src={imgUrl}
+              alt={product.name}
+              className="w-full h-full object-cover aspect-square"
+              onError={(e) => { e.currentTarget.src = defaultImg; }}
+            />
+          </div>
+
+
+          <div className="min-w-0">
+            <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+            <p className="mt-2 text-2xl font-semibold text-gray-900">
+              {typeof product.price === 'number'
+                ? product.price.toLocaleString('vi-VN') + ' ₫'
+                : `${product.price} VNĐ`}
             </p>
-            <p className="mb-4 text-gray-700">{product.description}</p>
-            <div className="text-sm text-gray-500 mb-2">
-              Danh mục:  {product.category?.name || 'N/A'}
-            </div>
-            <div className="text-sm text-gray-500">
-              Tồn kho: {product.quantity}
-            </div>
+
             {product.isFeatured && (
-              <span className="inline-block mt-2 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+              <span className="mt-3 inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold">
                 Sản phẩm nổi bật
               </span>
             )}
+
+            <div className="mt-4 space-y-2 text-sm text-gray-600">
+              <p><span className="text-gray-500">Danh mục:</span> {product.category?.name || 'N/A'}</p>
+              <p><span className="text-gray-500">Tồn kho:</span> {product.quantity}</p>
+            </div>
+
+            {product.description && (
+              <p className="mt-6 text-gray-700 leading-relaxed">{product.description}</p>
+            )}
+
+            <div className="mt-6 flex gap-3">
+              <button className="rounded-xl bg-black text-white px-4 py-2 font-semibold hover:opacity-90 active:scale-[0.98] transition">
+                Add to Cart
+              </button>
+              <button className="rounded-xl border border-gray-300 px-4 py-2 font-semibold text-gray-800 hover:bg-gray-50 active:scale-[0.98] transition">
+                Buy Now
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="w-60 bg-white shadow">
-        <RelatedProductsVertical products={relatedProducts} />
-      </div>
+      <aside className="lg:sticky lg:top-24">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4">
+          <h2 className="text-lg font-semibold mb-3">Related Products</h2>
+          <RelatedProductsVertical products={relatedProducts} />
+        </div>
+      </aside>
     </div>
-  )
+  );
 }

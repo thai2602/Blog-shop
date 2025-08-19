@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import defaultImg from '../assets/default-img.jpg'
-import API_URL from '../config'
+import { API_URL } from '../config';
 
 export default function RelatedBlogsVertical({ posts = [], title = 'Related Blogs' }) {
   // Hàm xử lý ảnh an toàn

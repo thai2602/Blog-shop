@@ -1,4 +1,3 @@
-// server/routes/users.js
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -6,7 +5,7 @@ import User from '../models/users.js';
 
 const router = express.Router();
 
-// Đăng ký
+
 router.post('/register', async (req, res) => {
     console.log('Body nhận từ FE:', req.body);
   try {
@@ -16,13 +15,13 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Username đã được sử dụng' });
 }
 
-    // Kiểm tra email tồn tại
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email đã được sử dụng' });
     }
 
-    // Hash password
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -39,25 +38,21 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Đăng nhập
 router.post('/login', async (req, res) => {
   console.log("Body nhận từ FE:", req.body);
   try {
     const { email, password } = req.body;
 
-    // Kiểm tra user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Sai email hoặc mật khẩu' });
     }
 
-    // Kiểm tra mật khẩu
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Sai email hoặc mật khẩu' });
     }
 
-    // Tạo token
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET || 'secret_key',
@@ -74,7 +69,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Middleware xác thực token
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ message: 'Không có token' });
@@ -89,7 +83,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// Lấy thông tin người dùng
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');

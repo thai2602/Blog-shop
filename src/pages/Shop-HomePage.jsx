@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaPhone, FaEnvelope, FaFacebook } from "react-icons/fa";
 import defaultImg from "../assets/default-img.jpg";
+import { listAlbums } from "../lib/albumsApi.js";
+import { API_URL } from '../config';
 
 const slides = [defaultImg];
 const products = []; 
@@ -8,6 +10,17 @@ const products = [];
 export default function ShopHomePage() {
   const [current, setCurrent] = useState(0);
   const [activeTab, setActiveTab] = useState("products");
+  const [albums, setAlbums] = useState([]);
+  const [loadingAlbum, setLoadingAlbum] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "album" && shopId) {
+      setLoadingAlbum(true);
+      listAlbums(shopId)
+        .then((data) => setAlbums(data.items))
+        .finally(() => setLoadingAlbum(false));
+    }
+  }, [activeTab, shopId]);
 
   const nextSlide = () => setCurrent((p) => (p + 1) % slides.length);
   const prevSlide = () => setCurrent((p) => (p - 1 + slides.length) % slides.length);
@@ -135,8 +148,33 @@ export default function ShopHomePage() {
         {activeTab === "album" && (
           <section className="rounded-xl bg-white p-6 shadow">
             <h2 className="mb-3 text-xl font-semibold">Product Albums</h2>
-            <p className="mb-4 text-gray-600">Group your items into collections to tell a cohesive story.</p>
-            <button className="rounded-lg bg-green-600 px-4 py-2 font-medium text-white transition hover:bg-green-700">
+            {loadingAlbum && <p className="text-gray-500">Loading...</p>}
+
+            {!loadingAlbum && albums.length === 0 && (
+              <p className="text-gray-500">No albums yet.</p>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              {albums.map((album) => (
+                <div
+                  key={album._id}
+                  className="rounded-lg border p-4 shadow hover:shadow-md cursor-pointer"
+                >
+                  <img
+                    src={album.coverImage || defaultImg}
+                    alt={album.name}
+                    className="h-32 w-full object-cover rounded-md"
+                  />
+                  <h3 className="mt-2 font-semibold">{album.name}</h3>
+                  <p className="text-sm text-gray-500">{album.theme}</p>
+                  <p className="text-xs text-gray-400">
+                    {album.productCount} products
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <button className="mt-6 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700">
               + New album
             </button>
           </section>

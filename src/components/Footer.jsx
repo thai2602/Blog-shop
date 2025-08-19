@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Footer = () => (
-  <footer id = "footer" className="bg-gray-800 text-white text-center p-4 mt-8">
-    © 2025 BlogShop. All rights reserved.
+  <footer className="border-t border-gray-200 bg-white text-gray-600 text-center py-4">
+    © 2025 <span className="font-semibold text-gray-800">BlogShop</span>. All rights reserved.
   </footer>
 );
 

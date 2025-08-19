@@ -1,29 +1,68 @@
-import { Link } from 'react-router-dom';
-import defaultImg from '../assets/default-img.jpg';
-import API_URL from '../config';
+import { Link } from "react-router-dom";
+import defaultImg from "../assets/default-img.jpg";
+import { API_URL } from '../config';
 
 const PostCard = ({ post }) => {
-  if (!post || !post.content) return null;
+  if (!post) return null;
+
+  const imgUrl = post.image
+    ? (post.image.startsWith("http") ? post.image : `${API_URL}${post.image}`)
+    : defaultImg;
+
+  const dateStr = post.createdAt
+    ? new Date(post.createdAt).toLocaleDateString()
+    : "";
+
+  const excerpt =
+    typeof post.content === "string"
+      ? post.content.replace(/\s+/g, " ").trim()
+      : "";
 
   return (
-    <Link to={`/blog/${post.slug || post._id}`} id = "PostCard" className="border p-4 rounded shadow hover:shadow-lg inline-block">
-      <img src={post.image 
-          ? `${API_URL}${post.image}`
-          : defaultImg } 
-          alt={post.title} className="mb-3 w-full h-48 object-cover rounded" />
-          
-      <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+    <Link
+      to={`/blog/${post.slug || post._id}`}
+      aria-label={post.title}
+      className="group relative block min-w-[300px] h-72 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+    >
+      <img
+        src={imgUrl}
+        alt={post.title || "Blog cover"}
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+        {dateStr && (
+          <p className="text-xs text-white/80 mb-1">{dateStr}</p>
+        )}
 
-      <p className="text-gray-600">
-        {typeof post.content === 'string' && post.content.length > 100
-          ? `${post.content.slice(0, 100)}...`
-          : post.content}
-      </p>
+        <h3 className="text-lg sm:text-xl font-semibold leading-snug line-clamp-2">
+          {post.title || "Untitled"}
+        </h3>
+
+        {Array.isArray(post.categories) && post.categories.length > 0 && (
+          <div className="mt-2 mb-2 flex flex-wrap gap-2">
+            {post.isFeatured && (
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900">
+                Featured
+              </span>
+            )}
+            {post.categories.slice(0, 3).map((c) => (
+              <span
+                key={c._id || c.name}
+                className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900"
+              >
+                {c.name}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="text-sm text-white/90 line-clamp-2">
+          {excerpt || "Read the full story →"}
+        </p>
+      </div>
     </Link>
-    );
+  );
 };
 
 export default PostCard;
-
-
-

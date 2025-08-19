@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import API_URL from '../config';
 
+import api from '../lib/api';
+import { API_URL } from '../config';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -11,13 +11,13 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/posts`)
+    api.get(`${API_URL}/posts`)
       .then(res => setPosts(res.data))
       .catch(err => console.error('Lỗi khi tải bài viết:', err));
   }, []);
 
     useEffect(() => {
-    axios.get(`${API_URL}/categories`)
+    api.get(`${API_URL}/categories`)
       .then(res => {
         setCategories(res.data)
       })
@@ -31,14 +31,14 @@ const Blog = () => {
     : posts;
 
   return (
-    <div id="blog-page" className="main-blog max-w-6xl mx-auto px-4 mt-8 flex flex-col lg:flex-row gap-8">
+    <div id="blog-page" className="main-blog mt-8 max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
       
       <div className="page flex w-full">
         <div className="main-page w-5/6 pr-12">
-          <h2 className="text-2xl font-bold mb-4 capitalize">
+          <h2 className="text-3xl font-bold mb-4 capitalize">
             {selectedCategory ? `Related: ${selectedCategory}` : "Popular"}
           </h2>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 mt-4">
             {filteredPosts.length > 0 ? (
               filteredPosts.map(post => (
                 <PostCard key={post._id} post={post} />

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
 import defaultImg from '../assets/default-img.jpg'
 import RelatedBlogsVertical from '../sub/RelatedBlog'
-import API_URL from '../config'
+import { API_URL } from '../config';
+import api from '../lib/api';
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -17,10 +17,10 @@ export default function BlogDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/posts/${slug}`);
+        const { data } = await api.get(`/posts/${slug}`);
         setPost(data); 
 
-        const { data: allPosts } = await axios.get(`${API_URL}/posts`);
+        const { data: allPosts } = await api.get(`/posts`);
         if (Array.isArray(allPosts)) {
           const filtered = allPosts
             .filter(p => p.slug !== slug) 
@@ -45,7 +45,7 @@ export default function BlogDetail() {
     : defaultImg;
 
   return (
-    <div id="blog-detail-page" className="max-w-6xl mx-auto px-4 mt-8 flex flex-col lg:flex-row gap-8">
+    <div id="blog-detail-page" className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
       <div className="flex-1 rounded-xl shadow-md overflow-hidden bg-white">
         <div
           className="relative h-80 w-full bg-cover bg-center"

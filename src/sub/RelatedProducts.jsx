@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import defaultImg from '../assets/default-img.jpg'
-import API_URL from '../config'
+import { API_URL } from '../config';
 
 export default function RelatedProductsVertical({ products = [], title = 'Related Products' }) {
   const getImageUrl = (img) => {
@@ -10,9 +10,7 @@ export default function RelatedProductsVertical({ products = [], title = 'Relate
   }
 
   return (
-    <aside className="w-full max-w-md">
-      <h3 className="text-lg font-semibold mb-3 px-3">{title}</h3>
-
+    <aside className="w-full max-w-md mt-3">
       <div className="flex flex-col gap-3">
         {products.length === 0 ? (
           <div className="px-3 py-4 bg-white rounded-lg shadow-sm text-sm text-gray-500">

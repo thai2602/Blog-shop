@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../lib/api";
+import { API_URL } from "../config";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const AddProduct = () => {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/productCategories")
+    api.get("/productCategories")
       .then(res => {
         setCategories(res.data);
       })
@@ -51,14 +52,18 @@ const AddProduct = () => {
       data.append(key, value);
     });
 
+    for (let [k, v] of data.entries()) {
+    console.log(k, v);
+  }
+
     try {
-      await axios.post('http://localhost:5000/products', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      await api.post("/products", data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       alert('Thêm sản phẩm thành công!');
       navigate('/shop'); 
     } catch (err) {
-      console.error('Lỗi khi thêm sản phẩm:', err);
+      console.error('Lỗi khi thêm sản phẩm:', err.response?.data || err.message);
       alert('Lỗi khi gửi sản phẩm lên server!');
     }
   };
