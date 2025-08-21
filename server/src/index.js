@@ -1,24 +1,28 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import morgan from "morgan";
 
-import connectDB from "./db.js";
-import User from "./models/users.js";
+import connectDB from "./utils/db.js";
 
 import postsRouter from "./routes/posts.js";
 import productsRouter from "./routes/products.js";
-import userRoutes from "./routes/users.js";
+import userRoutes from "./routes/auth.js";
 import postCategories from "./routes/postCategoriesRoute.js";
 import ProductCategoriesRoute from "./routes/productCategoriesRoute.js";
 import albumRoutes from "./routes/albumsRoute.js";
+import { isAuth, optionalAuth, requireRole } from "./middlewares/auth.js";
+import shopRoute from "./routes/shopRoute.js";
 
 dotenv.config();
+if (!process.env.JWT_SECRET) {
+  console.error("Missing JWT_SECRET in .env");
+  process.exit(1);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,23 +30,20 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 5000;
 
 const ENV_ORIGINS = (process.env.CORS_ORIGINS || "")
-  .split(",")
-  .map(s => s.trim())
-  .filter(Boolean);
+  .split(",").map(s => s.trim()).filter(Boolean);
 
 const allowedOrigins = [
+  ...ENV_ORIGINS,                       
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  /\.ngrok-free\.app$/
+  /\.ngrok-free\.app$/,
 ];
 
 const corsOptions = {
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
-    if (allowedOrigins.some(o =>
-      o instanceof RegExp ? o.test(origin) : o === origin
-    )) return cb(null, true);
-    cb(new Error("CORS blocked: " + origin));
+    const ok = allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
+    return ok ? cb(null, true) : cb(new Error("CORS blocked: " + origin));
   },
   credentials: true,
   methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
@@ -50,44 +51,12 @@ const corsOptions = {
 };
 
 const app = express();
-
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));  
+app.options(/.*/, cors(corsOptions), (req, res) => res.sendStatus(204));
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
-
-export const isAuth = async (req, res, next) => {
-  try {
-    let token;
-    const auth = req.headers.authorization;
-    if (auth?.startsWith("Bearer ")) token = auth.split(" ")[1];
-    if (!token && req.cookies?.token) token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: "No token provided" });
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
-    if (!user) return res.status(401).json({ message: "User not found" });
-    req.user = user;
-    next();
-  } catch {
-    return res.status(401).json({ message: "Invalid or expired token" });
-  }
-};
-
-export const optionalAuth = async (req, _res, next) => {
-  try {
-    const auth = req.headers.authorization;
-    if (auth?.startsWith("Bearer ")) {
-      const token = auth.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select("-password");
-    } else if (req.cookies?.token) {
-      const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select("-password");
-    }
-  } catch {}
-  next();
-};
 
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -95,12 +64,22 @@ app.use("/uploads", express.static(uploadDir));
 
 app.get("/health", (_req, res) => res.send("ok"));
 
+// Routers
 app.use("/posts", postsRouter);
 app.use("/products", productsRouter);
 app.use("/users", userRoutes);
 app.use("/categories", postCategories);
 app.use("/productCategories", ProductCategoriesRoute);
-app.use("/api/albums", albumRoutes);
+app.use("/albums", albumRoutes);
+app.use("/shop", shopRoute)
+
+
+app.use((err, req, res, next) => {
+  if (err && String(err.message || "").startsWith("CORS")) {
+    return res.status(403).json({ message: err.message });
+  }
+  next(err);
+});
 
 connectDB().then(() => {
   app.listen(PORT, () => {

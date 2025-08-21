@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from "../lib/api";
-import { API_URL } from "../config";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -22,9 +21,7 @@ const AddProduct = () => {
 
   useEffect(() => {
     api.get("/productCategories")
-      .then(res => {
-        setCategories(res.data);
-      })
+      .then(res => setCategories(res.data))
       .catch(err => console.error("Lỗi khi tải categories:", err));
   }, []);
 
@@ -37,7 +34,7 @@ const AddProduct = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       setFormData(prev => ({ ...prev, image: file }));
       setPreview(URL.createObjectURL(file));
@@ -47,24 +44,32 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
+    const shopId = localStorage.getItem('shopId'); 
+    console.log(shopId)
+    if (!shopId) {
+      alert('Thiếu shopId! Vui lòng đăng nhập hoặc chọn shop.');
+      return;
+    }
 
-    for (let [k, v] of data.entries()) {
-    console.log(k, v);
-  }
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('description', formData.description);
+    data.append('details', formData.details || '');
+    data.append('price', String(formData.price));
+    data.append('quantity', String(formData.quantity));
+    data.append('category', formData.category);
+    data.append('isFeatured', String(formData.isFeatured));
+    if (formData.image) data.append('image', formData.image);
 
     try {
-      await api.post("/products", data, {
+      await api.post(`/products/shop/${shopId}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert('Thêm sản phẩm thành công!');
-      navigate('/shop'); 
+      navigate('/shop');
     } catch (err) {
       console.error('Lỗi khi thêm sản phẩm:', err.response?.data || err.message);
-      alert('Lỗi khi gửi sản phẩm lên server!');
+      alert(err.response?.data?.message || 'Lỗi khi gửi sản phẩm lên server!');
     }
   };
 
@@ -157,16 +162,13 @@ const AddProduct = () => {
           <label className="block font-medium mb-1">Ảnh sản phẩm</label>
           <input
             type="file"
+            name="image"                
             accept="image/*"
             onChange={handleImageChange}
             className="w-full"
           />
           {preview && (
-            <img
-              src={preview}
-              alt="Preview"
-              className="mt-3 max-h-60 rounded-lg border"
-            />
+            <img src={preview} alt="Preview" className="mt-3 max-h-60 rounded-lg border" />
           )}
         </div>
 

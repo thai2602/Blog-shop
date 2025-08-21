@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
 import { FiPlusCircle } from "react-icons/fi";
+import { MdOutlineLogin } from "react-icons/md";
 import SubNav from "../sub/Subnav";
 
 export default function Navbar() {
@@ -23,9 +24,10 @@ export default function Navbar() {
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/">Home</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/addproduct">Add Product</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/create">Create Blog</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/shophomepage">Shop Page</Link>,
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/shops/me">Shop Page</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop">Shop</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/blog">Blog</Link>,
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/shops/create">Create Shop</Link>,
       ],
     },
   ];
@@ -151,6 +153,19 @@ return (
           "
         >
           Blog
+        </Link>
+
+        <Link
+          to="/login"
+          className="
+            relative inline-flex items-center h-10 leading-none
+            text-gray-700 hover:text-black
+            [&.active]:text-black [&.active]:after:w-full
+            after:content-[''] after:absolute after:left-0 after:bottom-0
+            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
+          "
+        >
+          <MdOutlineLogin size={20}/>
         </Link>
       </div>
 

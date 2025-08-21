@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import slugify from 'slugify';
 import Album from '../models/album.js';
 import Shop from '../models/shop.js';
@@ -8,7 +9,6 @@ export const createAlbum = async (req, res) => {
   try {
     const { shopId } = req.params;
     const { name, theme, coverImage, description, visibility = 'public' } = req.body;
-    const escapeRegex = (s = "") => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     await ensureShopOwner(shopId, req.user._id);
 
@@ -41,6 +41,7 @@ export const listAlbums = async (req, res) => {
     const pageNum  = Math.max(1, parseInt(req.query.page, 10)  || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 12));
     const q = (req.query.q || "").trim();
+    const escapeRegex = (s = "") => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     const filter = {};
     if (shopId) {
@@ -81,14 +82,35 @@ export const listAlbums = async (req, res) => {
 export const getAlbumBySlug = async (req, res) => {
   try {
     const { shopId, slug } = req.params;
-    const album = await Album.findOne({ shopId, slug })
-      .populate({ path: 'items.product', select: 'name price image images slug' })
+    const filter = { slug };
+    if (mongoose.Types.ObjectId.isValid(shopId)) {
+      filter.shopId = new mongoose.Types.ObjectId(shopId);
+    } else {
+      return res.status(400).json({ message: "Invalid shopId" });
+    }
+    const album = await Album.findOne(filter)
+      .populate({ path: "items.product", select: "name price image images slug" })
       .lean();
-
-    if (!album) return res.status(404).json({ message: 'Album not found' });
-    res.json(album);
   } catch {
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getAlbumById = async (req, res) => {
+  try {
+    const { albumId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(albumId)) {
+      return res.status(400).json({ message: "Invalid albumId" });
+    }
+
+    const album = await Album.findById(albumId)
+      .populate({ path: "items.product", select: "name price image images slug" })
+      .lean();
+
+    if (!album) return res.status(404).json({ message: "Album not found" });
+    res.json(album);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
 };
 

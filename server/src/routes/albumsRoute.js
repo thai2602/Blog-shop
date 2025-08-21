@@ -3,6 +3,7 @@ import {
   createAlbum,
   listAlbums,
   getAlbumBySlug,
+  getAlbumById,
   updateAlbumMeta,
   addProducts,
   reorderItems,
@@ -22,6 +23,7 @@ const router = express.Router();
 router.get("/", listAlbums);
 router.get("/shop/:shopId/:slug", getAlbumBySlug);
 router.get("/shop/:shopId", listAlbums);
+router.get("/:albumId", getAlbumById);
 
 /**
  * PRIVATE (cần chủ shop đăng nhập)

@@ -1,19 +1,49 @@
-// Profile.jsx
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../lib/api";
+import { API_URL } from "../config";  // <-- THÊM: dùng để ghép avatar
 
 export default function Profile() {
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    axios.get('http://localhost:5000/users/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(res => setUser(res.data));
-  }, []);
+    let ignore = false;
+
+    const run = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const res = await api.get("/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!ignore) setUser(res.data);
+      } catch (err) {
+        const status = err.response?.status;
+        if (status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    run();
+    return () => { ignore = true; };
+  }, [navigate]);
+
+  if (loading) return <div className="p-6">Loading...</div>;
+
+  // Nếu backend trả avatar kiểu "/uploads/xxx", cần ghép API_URL để load đúng cổng 5000
+  const avatarSrc = user?.avatar
+    ? (user.avatar.startsWith('/uploads/')
+        ? `${API_URL}${user.avatar}`
+        : user.avatar)
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || "User")}`;
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -30,13 +60,12 @@ export default function Profile() {
         </ul>
       </aside>
 
-      {/* Main content */}
+      {/* Main */}
       <main className="flex-1 p-8 bg-white shadow">
         <div className="max-w-2xl">
-          {/* Avatar + Buttons */}
           <div className="flex items-center gap-6 mb-6">
             <img
-              src={user?.avatar || "https://ui-avatars.com/api/?name=User"}
+              src={avatarSrc}
               alt="Profile"
               className="w-20 h-20 rounded-full border"
             />
@@ -50,12 +79,9 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Form fields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Profile name
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Profile name</label>
               <input
                 type="text"
                 defaultValue={user?.username || ""}
@@ -64,24 +90,18 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Username</label>
               <input
                 type="text"
-                defaultValue={user?.handle || ""}
+                defaultValue={user?.username || ""}
                 disabled
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-500"
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-500"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Available change in 25/04/2024
-              </p>
+              <p className="text-xs text-gray-500 mt-1">Available change in 25/04/2024</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Status recently
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Status recently</label>
               <input
                 type="text"
                 defaultValue={user?.status || ""}
@@ -90,9 +110,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                About me
-              </label>
+              <label className="block text-sm font-medium text-gray-700">About me</label>
               <textarea
                 defaultValue={user?.about || ""}
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"

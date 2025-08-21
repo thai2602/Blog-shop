@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../lib/api";
 
 const CreateBlog = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const CreateBlog = () => {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/categories')
+    api.get('/categories')
       .then(res => setCategories(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -54,7 +54,7 @@ const CreateBlog = () => {
     formData.categories.forEach(catId => data.append('categories', catId));
 
     try {
-      await axios.post('http://localhost:5000/posts', data, {
+      await api.post('/posts', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       navigate('/Blog');

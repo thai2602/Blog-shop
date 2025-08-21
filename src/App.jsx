@@ -7,14 +7,15 @@ import Shop from './pages/Shop';
 import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import ProductDetail from './pages/ProductDetail';
-import CreateBlog from './blog-create/CreateBlogUi';
-import AddProduct from './blog-create/AddProducts';
+import CreateBlog from './create/CreateBlogUi';
+import AddProduct from './create/AddProducts';
 import Login from './users/login';
 import Register from './users/register';
 import Profile from './users/userprofile';
 import ShopHomePage from './pages/Shop-HomePage';
 import ShopAlbums from './pages/shopAlbums';
 import AlbumDetail from './pages/AlbumDetail';
+import CreateShop from './create/CreateShop';
 
 function ShopHomeAlias() {
   const shopId = localStorage.getItem('shopId');
@@ -54,6 +55,7 @@ function App() {
               <Route path="/shops/:shopId" element={<ShopHomePage />} />
               <Route path="/shops/:shopId/albums" element={<ShopAlbums />} />
               <Route path="/shops/:shopId/albums/:slug" element={<AlbumDetail />} />
+              <Route path="/shops/create" element={<CreateShop />} />
 
               <Route path="*" element={<div className="p-6 text-red-600">404 – Page not found</div>} />
             </Routes>
