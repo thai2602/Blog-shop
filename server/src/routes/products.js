@@ -25,7 +25,6 @@ const upload = multer({ storage });
 
 /**
  * POST /products/shop/:shopId
- * Tạo sản phẩm thuộc 1 shop cụ thể (yêu cầu đăng nhập + chủ shop)
  */
 router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) => {
   try {
@@ -50,7 +49,7 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
     const newProduct = new Product({
-      shopId,                                  // <-- GẮN shopId vào document
+      shopId,                                 
       name,
       description,
       details,
@@ -67,7 +66,6 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
 
     res.status(201).json(populatedProduct);
   } catch (error) {
-    // Xử lý trùng slug trong cùng shop (index {shopId, slug} unique)
     if (error?.code === 11000) {
       return res.status(409).json({ message: 'Sản phẩm (slug) đã tồn tại trong shop này' });
     }
@@ -81,7 +79,6 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
 
 /**
  * GET /products/shop/:shopId
- * Lấy danh sách sản phẩm theo shop
  */
 router.get('/shop/:shopId', async (req, res) => {
   try {
@@ -100,11 +97,10 @@ router.get('/shop/:shopId', async (req, res) => {
   }
 });
 
-/* ====== Các route cũ vẫn giữ nếu bạn cần ====== */
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const {
-      shopId,               // cho phép pass shopId qua body nếu vẫn dùng endpoint này
+      shopId,     
       name,
       description,
       details,

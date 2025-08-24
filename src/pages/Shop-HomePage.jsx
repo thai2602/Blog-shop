@@ -1,4 +1,3 @@
-// client/src/pages/ShopHomePage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPhone, FaEnvelope, FaFacebook } from "react-icons/fa";
@@ -7,11 +6,14 @@ import { listAlbums } from "../lib/albumsApi.js";
 import api from "../lib/api";
 import { API_URL } from "../config";
 
+import ProductCard from "../components/ProductCard.jsx";
+
 export default function ShopHomePage() {
   const navigate = useNavigate();
 
   const [shop, setShop] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
+  const [products, setProducts] = useState([])
 
   const [current, setCurrent] = useState(0);
   const [activeTab, setActiveTab] = useState("products");
@@ -24,6 +26,17 @@ export default function ShopHomePage() {
     if (url.startsWith("/uploads/")) return `${API_URL}${url}`;
     return url;
   };
+
+useEffect(() => {
+  if (!shop?._id) return;
+
+  api.get(`/products/shop/${shop._id}`)
+    .then(res => {
+      setProducts(res.data);
+    })
+    .catch(err => console.error("Lỗi khi load products:", err));
+
+}, [shop?._id]); 
 
   useEffect(() => {
     const run = async () => {
@@ -104,7 +117,6 @@ export default function ShopHomePage() {
 
   const year = shop?.createdAt ? new Date(shop.createdAt).getFullYear() : null;
 
-  const products = Array.isArray(shop?.products) ? shop.products : [];
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
@@ -226,24 +238,9 @@ export default function ShopHomePage() {
                 No products yet. Add your first product ✨
               </div>
             ) : (
-              products.map((p) => {
-                const img =
-                  (Array.isArray(p.images) && p.images[0]) ? toAbsUrl(p.images[0]) : defaultImg;
-                return (
-                  <article key={p._id || p.id} className="rounded-xl bg-white p-4 shadow transition hover:shadow-md">
-                    <img src={img} alt={p.name} className="h-44 w-full rounded-lg object-cover" />
-                    <h3 className="mt-3 font-medium">{p.name}</h3>
-                    {"price" in p && (
-                      <p className="font-semibold text-red-500">
-                        {typeof p.price === "number" ? p.price.toLocaleString() : p.price}
-                      </p>
-                    )}
-                    <button className="mt-3 w-full rounded-lg bg-blue-600 py-2 font-medium text-white transition hover:bg-blue-700">
-                      Buy now
-                    </button>
-                  </article>
-                );
-              })
+              products.map((p) => (
+                <ProductCard key={p._id} p={p} />
+              ))
             )}
           </div>
         )}

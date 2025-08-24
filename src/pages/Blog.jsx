@@ -3,7 +3,7 @@ import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
 
 import api from '../lib/api';
-import { API_URL } from '../config';
+
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -11,13 +11,13 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    api.get(`${API_URL}/posts`)
+    api.get(`/posts`)
       .then(res => setPosts(res.data))
       .catch(err => console.error('Lỗi khi tải bài viết:', err));
   }, []);
 
     useEffect(() => {
-    api.get(`${API_URL}/categories`)
+    api.get(`/categories`)
       .then(res => {
         setCategories(res.data)
       })

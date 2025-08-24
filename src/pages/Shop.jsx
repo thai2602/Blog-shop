@@ -9,6 +9,8 @@ import { FaShippingFast } from "react-icons/fa";
 import { API_URL } from '../config';
 import api from "../lib/api";   
 
+import ProductCard from '../components/ProductCard';
+
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,8 +25,8 @@ const Shop = () => {
 
   useEffect(() => {
     Promise.all([
-      api.get(`${API_URL}/products`),
-      api.get(`${API_URL}/productCategories`)
+      api.get(`/products`),
+      api.get(`/productCategories`)
     ])
       .then(([productsRes, categoriesRes]) => {
         setProducts(productsRes.data);
@@ -33,11 +35,6 @@ const Shop = () => {
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
-
-  const formatPrice = (v) =>
-    typeof v === 'number'
-      ? v.toLocaleString('vi-VN') + ' ₫'
-      : `${v} VNĐ`;
 
   return (
     <div id="shop-page" className="space-y-8">
@@ -119,35 +116,13 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((p) => (
-                <Link
-                  key={p._id}
-                  to={`/product/${p.slug}`}
-                  className="
-                    group bg-white rounded-2xl border border-gray-200 shadow-sm
-                    hover:shadow-md hover:-translate-y-0.5 transition
-                    block overflow-hidden
-                  "
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={p.image ? `${API_URL}${p.image}` : defaultImg}
-                      alt={p.name}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                    />
-                  </div>
-
-                  <div className="p-4">
-                    <h3 className="text-base font-semibold text-gray-900 line-clamp-1">{p.name}</h3>
-                    <p className="mt-1 text-sm text-gray-500">{p?.category?.name || "No category"}</p>
-                    <p className="mt-2 font-semibold text-gray-900">{formatPrice(p.price)}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          ) : (   
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map((p) => (
+                    <ProductCard key = {p._id} p = {p} />
+                  ))}
+              </div>
+              )}
         </section>
       </div>
 
