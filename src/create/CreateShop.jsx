@@ -1,4 +1,3 @@
-// client/src/pages/CreateShop.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../lib/api";
@@ -99,7 +98,7 @@ export default function CreateShop() {
 
         addToast("Tạo shop thành công!", "success");
         const created = res.data; // backend trả về object shop
-        navigate(`/shops/${created._id}`);
+        navigate(`/shop/${created._id}`);
         return;
     } catch (err) {
         // Nếu backend chặn 1 user = 1 shop
@@ -107,7 +106,7 @@ export default function CreateShop() {
         const shopId = err.response.data?.shopId;
         if (shopId) {
             addToast("Bạn đã có shop, chuyển sang trang shop.", "info");
-            navigate(`/shops/${shopId}`);
+            navigate(`/shop/${shopId}`);
             return;
         }
         // Fallback: tự lấy shop của mình (NHỚ gắn Authorization)
@@ -115,7 +114,7 @@ export default function CreateShop() {
             const me = await api.get("/shop/me", {
             headers: { Authorization: `Bearer ${token}` },
             });
-            navigate(`/shops/${me.data._id}`);
+            navigate(`/shop/${me.data._id}`);
             return;
         } catch (e2) {
             const msg = e2.response?.data?.message || "Không thể lấy shop hiện có";

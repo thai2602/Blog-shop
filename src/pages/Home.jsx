@@ -114,10 +114,10 @@ const Home = () => {
             Discover products & stories in a minimal black & white style
           </p>
           <Link
-            to="/shop"
+            to="/shop/create"
             className="inline-block bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
           >
-            Shop Now
+            Create Shop
           </Link>
         </div>
       </section>

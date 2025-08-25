@@ -45,7 +45,9 @@ const AddProduct = () => {
     e.preventDefault();
 
     const shopId = localStorage.getItem('shopId'); 
+    
     console.log(shopId)
+
     if (!shopId) {
       alert('Thiếu shopId! Vui lòng đăng nhập hoặc chọn shop.');
       return;

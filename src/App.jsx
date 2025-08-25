@@ -16,11 +16,14 @@ import ShopHomePage from './pages/Shop-HomePage';
 import ShopAlbums from './pages/shopAlbums';
 import AlbumDetail from './pages/AlbumDetail';
 import CreateShop from './create/CreateShop';
+import CreateAlbum from './create/CreateAlbum';
 
+
+//navigate to user shop
 function ShopHomeAlias() {
   const shopId = localStorage.getItem('shopId');
   if (!shopId) return <Navigate to="/shop" replace />;
-  return <Navigate to={`/shops/${shopId}`} replace />;
+  return <Navigate to={`/shop/${shopId}`} replace />;
 }
 
 function App() {
@@ -41,7 +44,7 @@ function App() {
         ) : (
           <div className="mx-auto max-w-7xl w-full px-6 py-10">
             <Routes>
-              <Route path="/shophomepage" element={<ShopHomeAlias />} />
+              <Route path="/my-shop" element={<ShopHomeAlias />} />
 
               <Route path="/" element={<Home />} />
               <Route path="/shop" element={<Shop />} />
@@ -52,10 +55,11 @@ function App() {
               <Route path="/addproduct" element={<AddProduct />} />
               <Route path="/profile" element={<Profile />} />
 
-              <Route path="/shops/:shopId" element={<ShopHomePage />} />
-              <Route path="/shops/:shopId/albums" element={<ShopAlbums />} />
-              <Route path="/shops/:shopId/albums/:slug" element={<AlbumDetail />} />
-              <Route path="/shops/create" element={<CreateShop />} />
+              <Route path="/shop/:shopId" element={<ShopHomePage />} />
+              <Route path="/shop/:shopId/albums" element={<ShopAlbums />} />
+              <Route path="/shop/:shopId/albums/:slug" element={<AlbumDetail />} />
+              <Route path="/shop/create" element={<CreateShop />} />
+              <Route path="/shop/:shopId/albums/new" element={<CreateAlbum />} />
 
               <Route path="*" element={<div className="p-6 text-red-600">404 – Page not found</div>} />
             </Routes>

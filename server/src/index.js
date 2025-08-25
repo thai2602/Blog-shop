@@ -33,10 +33,9 @@ const ENV_ORIGINS = (process.env.CORS_ORIGINS || "")
   .split(",").map(s => s.trim()).filter(Boolean);
 
 const allowedOrigins = [
-  ...ENV_ORIGINS,                       
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  /\.ngrok-free\.app$/,
+  ...ENV_ORIGINS,
+  /^https?:\/\/(localhost|127\.0\.0\.1):5173$/,
+  /^https?:\/\/.*\.ngrok-free\.app$/,
 ];
 
 const corsOptions = {
@@ -58,7 +57,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = path.resolve(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 app.use("/uploads", express.static(uploadDir));
 

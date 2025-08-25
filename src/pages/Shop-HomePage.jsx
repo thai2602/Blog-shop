@@ -7,6 +7,7 @@ import api from "../lib/api";
 import { API_URL } from "../config";
 
 import ProductCard from "../components/ProductCard.jsx";
+import CreateAlbum from "../create/CreateAlbum.jsx";
 
 export default function ShopHomePage() {
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ useEffect(() => {
       <div className="p-6">
         <p className="text-gray-600">Bạn chưa có shop.</p>
         <button
-          onClick={() => navigate("/shops/create")}
+          onClick={() => navigate("/shop/create")}
           className="mt-3 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
         >
           Tạo shop
@@ -279,7 +280,10 @@ useEffect(() => {
               ))}
             </div>
 
-            <button className="mt-6 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700">
+            <button
+              onClick={() => navigate(`/shop/${shop._id}/albums/new`)}
+              className="mt-6 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
+            >
               + New album
             </button>
           </section>

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import defaultImg from '../assets/default-img.jpg'
 import RelatedBlogsVertical from '../sub/RelatedBlog'
-import { API_URL } from '../config';
+
 import api from '../lib/api';
+import toAbsUrl from '../lib/toAbsUrl';
 
 export default function BlogDetail() {
   const { slug } = useParams();
@@ -40,9 +41,7 @@ export default function BlogDetail() {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!post) return <p>Loading...</p>;
   
-  const bgUrl = post.image
-    ? (post.image.startsWith('http') ? post.image : `${API_URL}${post.image}`)
-    : defaultImg;
+   const bgUrl = post.image ? toAbsUrl(post.image) : defaultImg;
 
   return (
     <div id="blog-detail-page" className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
