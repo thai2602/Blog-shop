@@ -14,7 +14,7 @@ export default function RelatedProductsVertical({ products = [], title = 'Relate
       <div className="flex flex-col gap-3">
         {products.length === 0 ? (
           <div className="px-3 py-4 bg-white rounded-lg shadow-sm text-sm text-gray-500">
-            Không có sản phẩm liên quan.
+            No related products.
           </div>
         ) : (
           products.map((p) => {
@@ -36,22 +36,22 @@ export default function RelatedProductsVertical({ products = [], title = 'Relate
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-indigo-600">
-                    {p.name || 'Không có tên sản phẩm'}
+                    {p.name || 'No product name'}
                   </h4>
 
                   <div className="mt-1 text-sm font-semibold text-red-500">
                     {p.price != null
-                      ? p.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-                      : 'Liên hệ'}
+                      ? p.price.toLocaleString('vi-VN', { style: 'currency', currency: '$' })
+                      : 'Contact'}
                   </div>
 
                   <div className="mt-0.5 text-xs text-gray-500">
-                    {p.quantity > 0 ? `Còn ${p.quantity} sản phẩm` : 'Hết hàng'}
+                    {p.quantity > 0 ? `${p.quantity} products left` : 'Out of stock'}
                   </div>
 
                   {p.category && (
                     <div className="mt-1 text-xs text-gray-400 italic">
-                      {p.category?.name || 'Không có danh mục'}
+                      {p.category?.name || 'No categories'}
                     </div>
                   )}
                 </div>

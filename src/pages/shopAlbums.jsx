@@ -43,8 +43,8 @@ export default function ShopAlbums({ shopId, token }) {
           <li key={a.slug} className="border rounded-lg p-3">
             <div className="font-semibold">{a.name}</div>
             <div className="text-sm text-gray-500">{a.theme}</div>
-            <div className="text-xs mt-1">{a.productCount} sản phẩm</div>
-            {/* Link sang trang chi tiết album */}
+            <div className="text-xs mt-1">{a.productCount} products</div>
+            {/* Link to product detail */}
           </li>
         ))}
       </ul>

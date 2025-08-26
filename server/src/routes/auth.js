@@ -1,7 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';              
-import jwt from 'jsonwebtoken';            
+import jwt from 'jsonwebtoken';   
+import mongoose from "mongoose";
+
 import User from '../models/Users.js';
+import Post from '../models/posts.js';
 import { isAuth } from '../middlewares/auth.js';   
 
 const router = express.Router();
@@ -83,7 +86,6 @@ router.post('/login', async (req, res) => {
 
 router.get('/profile', isAuth, async (req, res) => {
   try {
-    // Hỗ trợ cả trường hợp req.user là decoded ({id}) hoặc là doc ({_id})
     const uid = req.user?._id || req.user?.id;
     if (!uid) return res.status(401).json({ message: 'Not authenticated' });
 
@@ -95,5 +97,94 @@ router.get('/profile', isAuth, async (req, res) => {
     return res.status(500).json({ message: 'Lỗi server' });
   }
 });
+
+router.get('/profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'User id không hợp lệ' });
+    }
+
+    const user = await User.findById(id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User không tồn tại' });
+
+    return res.json(user);
+  } catch (error) {
+    console.error('Lỗi khi lấy profile theo id:', error);
+    return res.status(500).json({ message: 'Lỗi server' });
+  }
+});
+
+router.get('/profile/:id/posts', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'User id không hợp lệ' });
+    }
+
+    const page  = Math.max(parseInt(req.query.page)  || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
+    const skip  = (page - 1) * limit;
+    const { search, category } = req.query;
+
+    const filter = { userId: id };
+    if (category && mongoose.isValidObjectId(category)) {
+      filter.categories = category;
+    }
+    if (search) {
+      const rx = new RegExp(search.trim(), 'i');
+      filter.$or = [{ title: rx }, { summary: rx }];
+    }
+
+    const [items, total] = await Promise.all([
+      Post.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('categories', 'name slug'),
+      Post.countDocuments(filter),
+    ]);
+
+    return res.json({
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit),
+      items,
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy posts theo user:', error);
+    return res.status(500).json({ message: 'Lỗi server' });
+  }
+});
+
+router.get('/profile/:id/summary', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'User id không hợp lệ' });
+    }
+
+    const [totalPosts, distinctCats] = await Promise.all([
+      Post.countDocuments({ userId: id }),
+      Post.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(id) } },
+        { $unwind: { path: '$categories', preserveNullAndEmptyArrays: false } },
+        { $group: { _id: '$categories' } },
+        { $count: 'count' }
+      ])
+    ]);
+
+    const totalCategories = distinctCats?.[0]?.count || 0;
+
+    return res.json({ totalPosts, totalCategories });
+  } catch (error) {
+    console.error('Lỗi summary profile:', error);
+    return res.status(500).json({ message: 'Lỗi server' });
+  }
+});
+
+
 
 export default router;

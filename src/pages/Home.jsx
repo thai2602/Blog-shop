@@ -68,7 +68,7 @@ const Home = () => {
         }
       } catch (err) {
         if (err.name === "CanceledError" || err.name === "AbortError") return;
-        console.error("Lỗi khi tải dữ liệu:", err);
+        console.error("Error when load data:", err);
         if (!cancelled) {
           setPosts([]);
           setProducts([]);
@@ -283,7 +283,7 @@ const Home = () => {
 
       {loading && (
         <div className="fixed bottom-4 right-4 rounded-lg bg-black text-white px-3 py-2 text-sm shadow">
-          Đang tải dữ liệu...
+          Loading data......
         </div>
       )}
     </div>

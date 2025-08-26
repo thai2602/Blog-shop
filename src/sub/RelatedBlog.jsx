@@ -4,7 +4,6 @@ import defaultImg from '../assets/default-img.jpg'
 import { API_URL } from '../config';
 
 export default function RelatedBlogsVertical({ posts = [], title = 'Related Blogs' }) {
-  // Hàm xử lý ảnh an toàn
   const getImageUrl = (img) => {
     if (!img) return defaultImg
     return img.startsWith('http') ? img : `${API_URL}${img}`
@@ -17,7 +16,7 @@ export default function RelatedBlogsVertical({ posts = [], title = 'Related Blog
       <div className="flex flex-col gap-3">
         {posts.length === 0 ? (
           <div className="px-3 py-4 bg-white rounded-lg shadow-sm text-sm text-gray-500">
-            Không có bài viết liên quan.
+            No related posts.
           </div>
         ) : (
           posts.map((p) => {
@@ -41,12 +40,12 @@ export default function RelatedBlogsVertical({ posts = [], title = 'Related Blog
                 {/* Content */}
                 <div className="min-w-0 flex-1">
                   <h4 className="text-sm font-medium text-gray-900 truncate group-hover:text-indigo-600">
-                    {p.title || 'Không có tiêu đề'}
+                    {p.title || 'No title'}
                   </h4>
 
                   <div className="mt-1 text-xs text-gray-500 flex items-center gap-2">
                     <time dateTime={p.createdAt}>
-                      {p.createdAt ? new Date(p.createdAt).toLocaleDateString('vi-VN') : 'Không rõ ngày'}
+                      {p.createdAt ? new Date(p.createdAt).toLocaleDateString('vi-VN') : 'Date unknown'}
                     </time>
                     {p.author && <span>• {p.author}</span>}
                   </div>

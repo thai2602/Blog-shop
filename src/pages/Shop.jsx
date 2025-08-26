@@ -101,7 +101,7 @@ const Shop = () => {
             <h2 className="text-2xl font-bold">Products</h2>
             {selectedCategory && (
               <span className="text-sm text-gray-500">
-                Đang lọc theo: <span className="font-medium text-gray-700">{selectedCategory}</span>
+                Filter by: <span className="font-medium text-gray-700">{selectedCategory}</span>
               </span>
             )}
           </div>

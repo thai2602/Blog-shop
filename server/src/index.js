@@ -15,7 +15,6 @@ import userRoutes from "./routes/auth.js";
 import postCategories from "./routes/postCategoriesRoute.js";
 import ProductCategoriesRoute from "./routes/productCategoriesRoute.js";
 import albumRoutes from "./routes/albumsRoute.js";
-import { isAuth, optionalAuth, requireRole } from "./middlewares/auth.js";
 import shopRoute from "./routes/shopRoute.js";
 
 dotenv.config();

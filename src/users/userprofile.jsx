@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../lib/api";
-import { API_URL } from "../config";  // <-- THÊM: dùng để ghép avatar
+import { API_URL } from "../config"; 
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -38,7 +38,6 @@ export default function Profile() {
 
   if (loading) return <div className="p-6">Loading...</div>;
 
-  // Nếu backend trả avatar kiểu "/uploads/xxx", cần ghép API_URL để load đúng cổng 5000
   const avatarSrc = user?.avatar
     ? (user.avatar.startsWith('/uploads/')
         ? `${API_URL}${user.avatar}`

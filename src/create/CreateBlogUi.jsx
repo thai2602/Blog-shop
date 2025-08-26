@@ -5,8 +5,10 @@ import api from "../lib/api";
 const CreateBlog = () => {
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState([]); 
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     summary: '',
@@ -14,61 +16,78 @@ const CreateBlog = () => {
     image: null,
     categories: [], 
   });
-  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     api.get('/categories')
       .then(res => setCategories(res.data))
-      .catch(err => console.error(err));
+      .catch(err => console.error('Lỗi tải categories:', err));
   }, []);
-
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCategoriesChange = (e) => {
-    const selected = Array.from(e.target.selectedOptions, option => option.value);
-    setFormData(prev => ({ ...prev, categories: selected }));
+  const toggleCategory = (catId, checked) => {
+    setFormData(prev => ({
+      ...prev,
+      categories: checked
+        ? [...prev.categories, catId]
+        : prev.categories.filter(id => id !== catId),
+    }));
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFormData(prev => ({ ...prev, image: file }));
+    if (preview) URL.revokeObjectURL(preview);
+    setPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = new FormData();
-    data.append('title', formData.title);
-    data.append('summary', formData.summary);
-    data.append('content', formData.content);
-    data.append('categories', JSON.stringify(selectedCategories));
-    if (formData.image) data.append('image', formData.image);
-    formData.categories.forEach(catId => data.append('categories', catId));
+    if (submitting) return;
+    setSubmitting(true);
 
     try {
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('summary', formData.summary);
+      data.append('content', formData.content);
+
+      data.append('categories', JSON.stringify(formData.categories));
+
+      if (formData.image) data.append('image', formData.image);
+
       await api.post('/posts', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+
       });
-      navigate('/Blog');
+
+      navigate('/blog'); 
     } catch (err) {
-      console.error('Lỗi khi gửi bài viết:', err);
+      const msg = err?.response?.data?.message || 'Lỗi khi gửi bài viết';
+      console.error(msg, err);
+      alert(msg.includes('duplicate') || msg.includes('11000')
+        ? 'Tiêu đề đã tồn tại, hãy đổi tiêu đề khác.'
+        : msg);
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    return () => { if (preview) URL.revokeObjectURL(preview); };
+  }, [preview]);
+
+  
 
   return (
     <div id="create-blog" className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
       <h2 className="text-2xl font-bold mb-6 text-center">Tạo Bài Viết Mới</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-
         <div>
           <label className="block font-medium mb-1">Tiêu đề</label>
           <input
@@ -114,14 +133,8 @@ const CreateBlog = () => {
                 <input
                   type="checkbox"
                   value={cat._id}
-                  checked={selectedCategories.includes(cat._id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedCategories(prev => [...prev, cat._id]);
-                    } else {
-                      setSelectedCategories(prev => prev.filter(id => id !== cat._id));
-                    }
-                  }}
+                  checked={formData.categories.includes(cat._id)}
+                  onChange={(e) => toggleCategory(cat._id, e.target.checked)}
                 />
                 {cat.name}
               </label>
@@ -143,12 +156,12 @@ const CreateBlog = () => {
           )}
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          disabled={submitting}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-60"
         >
-          Đăng bài
+          {submitting ? 'Đang đăng...' : 'Đăng bài'}
         </button>
       </form>
     </div>

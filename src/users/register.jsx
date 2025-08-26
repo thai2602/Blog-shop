@@ -16,13 +16,13 @@ export default function Register() {
     if (loading) return;
 
     if (!form.username.trim() || !form.email.trim() || !form.password) {
-      return addToast("Vui lòng điền đầy đủ thông tin", "error");
+      return addToast("Please fill in all information", "error");
     }
     if (form.password.length < 6) {
-      return addToast("Mật khẩu phải >= 6 ký tự", "error");
+      return addToast("Password must be >= 6 characters", "error");
     }
     if (form.password !== form.confirmPassword) {
-      return addToast("Xác nhận mật khẩu không khớp", "error");
+      return addToast("Confirm password does not match", "error");
     }
 
     setLoading(true);
@@ -33,10 +33,10 @@ export default function Register() {
         password: form.password
       };
       await api.post("/users/register", payload);
-      addToast("Đăng ký thành công! Hãy đăng nhập.", "success");
+      addToast("Registration successful! Please login.", "success");
       navigate("/login");
     } catch (err) {
-      const msg = err.response?.data?.message || "Đăng ký thất bại";
+      const msg = err.response?.data?.message || "Registration failed";
       addToast(msg, "error");
     } finally {
       setLoading(false);

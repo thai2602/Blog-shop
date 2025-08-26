@@ -4,6 +4,7 @@ import defaultImg from '../assets/default-img.jpg';
 import RelatedProductsVertical from '../sub/RelatedProducts';
 import { API_URL } from '../config';
 import api from '../lib/api';
+import ShopInfoCard from '../sub/ShopInfoCard';
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -95,13 +96,13 @@ export default function ProductDetail() {
 
             {product.isFeatured && (
               <span className="mt-3 inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold">
-                Sản phẩm nổi bật
+                Outstanding Products
               </span>
             )}
 
             <div className="mt-4 space-y-2 text-sm text-gray-600">
-              <p><span className="text-gray-500">Danh mục:</span> {product.category?.name || 'N/A'}</p>
-              <p><span className="text-gray-500">Tồn kho:</span> {product.quantity}</p>
+              <p><span className="text-gray-500">Categories:</span> {product.category?.name || 'N/A'}</p>
+              <p><span className="text-gray-500">Quantity:</span> {product.quantity}</p>
             </div>
 
             {product.description && (
@@ -121,7 +122,8 @@ export default function ProductDetail() {
       </section>
 
       <aside className="lg:sticky lg:top-24">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4">
+        <ShopInfoCard shopId = {product.shopId}  />
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 h-fit">
           <h2 className="text-lg font-semibold mb-3">Related Products</h2>
           <RelatedProductsVertical products={relatedProducts} />
         </div>

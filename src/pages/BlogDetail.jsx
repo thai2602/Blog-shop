@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import defaultImg from '../assets/default-img.jpg'
 import RelatedBlogsVertical from '../sub/RelatedBlog'
+import UserInfoCard from '../sub/UserInfoCard'
 
 import api from '../lib/api';
 import toAbsUrl from '../lib/toAbsUrl';
@@ -13,7 +14,7 @@ export default function BlogDetail() {
   const [error, setError] = useState(null);
 
   const words = post?.content ? post.content.split(/\s+/).length : 0;
-  const readingTime = Math.max(1, Math.round(words / 200));
+  const readingTime = Math.max(1, Math.round(words / 200)); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,10 +39,11 @@ export default function BlogDetail() {
     fetchData();
   }, [slug]);
 
+
   if (error) return <p className="text-red-500">{error}</p>;
   if (!post) return <p>Loading...</p>;
   
-   const bgUrl = post.image ? toAbsUrl(post.image) : defaultImg;
+  const bgUrl = post.image ? toAbsUrl(post.image) : defaultImg;
 
   return (
     <div id="blog-detail-page" className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
@@ -93,23 +95,8 @@ export default function BlogDetail() {
       </div>
 
 
-      <div className="w-60 bg-white">
-        <div className="mb-6 rounded-lg bg-white p-4 shadow-md">
-          <div className="flex items-center gap-3">
-            <img
-              src={post.author?.avatar || defaultImg}
-              alt={post.author?.name || "Shop"}
-              className="h-12 w-12 rounded-full object-cover"
-            />
-            <div>
-              <p className="font-semibold">{post.author?.name || "Shop"}</p>
-              <p className="text-sm text-gray-500">Owner</p>
-            </div>
-          </div>
-          <p className="mt-3 text-sm text-gray-600">
-            Sharing our passion and products with love 💖
-          </p>
-        </div>
+      <div className="w-60 bg-white h-fit">
+        <UserInfoCard userId = {post.userId._id} />
         <RelatedBlogsVertical posts={relatedPosts} />
       </div>
     </div>

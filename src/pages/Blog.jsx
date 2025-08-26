@@ -13,7 +13,7 @@ const Blog = () => {
   useEffect(() => {
     api.get(`/posts`)
       .then(res => setPosts(res.data))
-      .catch(err => console.error('Lỗi khi tải bài viết:', err));
+      .catch(err => console.error('Erro when load blog:', err));
   }, []);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ const Blog = () => {
       .then(res => {
         setCategories(res.data)
       })
-      .catch(err => console.error('Lỗi khi tải categories:', err));
+      .catch(err => console.error('Erro when load categories:', err));
   }, []);
 
   const filteredPosts = selectedCategory
@@ -35,10 +35,13 @@ const Blog = () => {
       
       <div className="page flex w-full">
         <div className="main-page w-5/6 pr-12">
-          <h2 className="text-3xl font-bold mb-4 capitalize">
+          <div className='mb-4 md:mb-6'>
+            <h2 className="text-3xl font-bold capitalize">
             {selectedCategory ? `Related: ${selectedCategory}` : "Popular"}
           </h2>
-          <div className="grid grid-cols-1 gap-4 mt-4">
+          <div className="mt-2 h-px bg-gray-300" />
+          </div>
+          <div className="grid grid-cols-1 gap-4 mt-6">
             {filteredPosts.length > 0 ? (
               filteredPosts.map(post => (
                 <PostCard key={post._id} post={post} />
@@ -50,7 +53,7 @@ const Blog = () => {
         </div>
 
         <div className="sub-page w-1/6">
-          <div className="w-full pb-2 text-xl font-semibold border-b border-gray-300 mb-3">
+          <div className="w-full pb-2 text-xl font-semibold border-b border-gray-300 mb-3 mt-2">
             Categories
           </div>
           <ul className="space-y-1">
@@ -90,6 +93,3 @@ const Blog = () => {
 
 export default Blog;
 
-// useEffect(() => {
-// console.log("Posts from API:", posts);
-// }, [posts]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaPhone, FaEnvelope, FaFacebook } from "react-icons/fa";
 import defaultImg from "../assets/default-img.jpg";
 import { listAlbums } from "../lib/albumsApi.js";
@@ -7,14 +7,17 @@ import api from "../lib/api";
 import { API_URL } from "../config";
 
 import ProductCard from "../components/ProductCard.jsx";
-import CreateAlbum from "../create/CreateAlbum.jsx";
 
 export default function ShopHomePage() {
   const navigate = useNavigate();
+  const { shopId } = useParams();   
 
   const [shop, setShop] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
+  const [shopError, setShopError] = useState("");
+
   const [products, setProducts] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   const [current, setCurrent] = useState(0);
   const [activeTab, setActiveTab] = useState("products");
@@ -27,55 +30,58 @@ export default function ShopHomePage() {
     if (url.startsWith("/uploads/")) return `${API_URL}${url}`;
     return url;
   };
-
-useEffect(() => {
-  if (!shop?._id) return;
-
-  api.get(`/products/shop/${shop._id}`)
-    .then(res => {
-      setProducts(res.data);
-    })
-    .catch(err => console.error("Lỗi khi load products:", err));
-
-}, [shop?._id]); 
-
   useEffect(() => {
-    const run = async () => {
+    if (!shopId) return;
+    let cancel = false;
+    (async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return navigate("/login");
-        const res = await api.get("/shop/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setShop(res.data);
+        setLoadingShop(true);
+        setShopError("");
+        const res = await api.get(`/shop/id/${shopId}`); 
+        if (!cancel) setShop(res.data);
       } catch (err) {
-        if (err.response?.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/login");
+        if (!cancel) {
+          const msg = err?.response?.data?.message || "Không thể tải shop";
+          setShopError(msg);
+          setShop(null);
         }
       } finally {
-        setLoadingShop(false);
+        if (!cancel) setLoadingShop(false);
       }
-    };
-    run();
-  }, [navigate]);
+    })();
+    return () => { cancel = true; };
+  }, [shopId]);
 
   useEffect(() => {
-    if (activeTab === "album" && shop?._id) {
-      setLoadingAlbum(true);
-      listAlbums(shop._id)
-        .then((data) => {
-          const items = data?.items ?? [];
-          setAlbums(
-            items.map((a) => ({
-              ...a,
-              coverImage: a.coverImage ? toAbsUrl(a.coverImage) : defaultImg,
-            }))
-          );
-        })
-        .finally(() => setLoadingAlbum(false));
-    }
-  }, [activeTab, shop?._id]);
+    if (!shopId) return;
+    let cancel = false;
+    setLoadingProducts(true);
+    api.get(`/products/shop/${shopId}`)
+      .then(res => { if (!cancel) setProducts(res.data || []); })
+      .catch(err => console.error("Error when load products:", err))
+      .finally(() => { if (!cancel) setLoadingProducts(false); });
+    return () => { cancel = true; };
+  }, [shopId]);
+
+
+  useEffect(() => {
+    if (activeTab !== "album" || !shopId) return;
+    let cancel = false;
+    setLoadingAlbum(true);
+    listAlbums(shopId)
+      .then((data) => {
+        if (cancel) return;
+        const items = data?.items ?? [];
+        setAlbums(
+          items.map((a) => ({
+            ...a,
+            coverImage: a.coverImage ? toAbsUrl(a.coverImage) : defaultImg,
+          }))
+        );
+      })
+      .finally(() => { if (!cancel) setLoadingAlbum(false); });
+    return () => { cancel = true; };
+  }, [activeTab, shopId]);
 
   const slides = (() => {
     const raw = [
@@ -92,30 +98,24 @@ useEffect(() => {
   const nextSlide = () => setCurrent((p) => (p + 1) % slidesLen);
   const prevSlide = () => setCurrent((p) => (p - 1 + slidesLen) % slidesLen);
 
-  if (loadingShop) {
-    return <div className="p-6 text-gray-600">Loading shop...</div>;
-  }
-
-  if (!shop) {
-    return (
-      <div className="p-6">
-        <p className="text-gray-600">Bạn chưa có shop.</p>
-        <button
-          onClick={() => navigate("/shop/create")}
-          className="mt-3 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
-        >
-          Tạo shop
-        </button>
-      </div>
-    );
-  }
+  if (loadingShop) return <div className="p-6 text-gray-600">Loading shop...</div>;
+  if (shopError) { return <div className="p-6 text-red-600">{shopError}</div>;}
+  if (!shop)       return (
+    <div className="p-6">
+      <p className="text-gray-600">Shop not exist.</p>
+      <button
+        onClick={() => navigate("/shop/create")}
+        className="mt-3 rounded-lg bg-gray-600 px-4 py-2 font-medium text-white hover:bg-gray-700"
+      >
+        Create Shop
+      </button>
+    </div>
+  );
 
   const phone = shop?.contact?.phone;
   const email = shop?.contact?.email;
   const facebook = shop?.contact?.facebook;
   const address = shop?.contact?.address;
-
-
   const year = shop?.createdAt ? new Date(shop.createdAt).getFullYear() : null;
 
 

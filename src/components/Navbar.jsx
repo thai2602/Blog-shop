@@ -24,7 +24,7 @@ export default function Navbar() {
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/">Home</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/addproduct">Add Product</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/create">Create Blog</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop/me">Shop Page</Link>,
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/my-shop">Shop Page</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop">Shop</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/blog">Blog</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop/create">Create Shop</Link>,
@@ -71,7 +71,6 @@ return (
           />
 
           <div className="absolute inset-y-0 right-12 flex items-center gap-3 px-2">
-            {/* Clear (×) — chỉ hiện khi có text */}
             {keyword && (
               <button
                 type="button"

@@ -23,15 +23,15 @@ export default function Login() {
       const payload = { email: form.email.trim(), password: form.password };
       const res = await api.post("/users/login", payload);
       const token = res.data?.token;
-      if (!token) throw new Error("Không nhận được token");
+      if (!token) throw new Error("Did not receive tokens");
       localStorage.setItem("token", token);
 
       await fetchAndSaveShop();
 
-      addToast("Đăng nhập thành công!", "success");
+      addToast("Login successful!", "success");
       navigate("/");
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Có lỗi xảy ra khi đăng nhập";
+      const msg = err.response?.data?.message || err.message || "An error occurred while logging in.";
       addToast(msg, "error");
     } finally {
       setLoading(false);
