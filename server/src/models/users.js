@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String, required: true, trim: true, unique: true, lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, 'Email không hợp lệ']
+      match: [/^\S+@\S+\.\S+$/, 'Invalid email']
     },
     password: { type: String, required: true, minlength: 6 },
     avatar: { type: String, default: '' },

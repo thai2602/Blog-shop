@@ -21,16 +21,45 @@ export default function Navbar() {
         </span>
       ),
       subMenu: [
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/">Home</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/addproduct">Add Product</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/create">Create Blog</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/my-shop">Shop Page</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop">Shop</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/blog">Blog</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop/create">Create Shop</Link>,
       ],
     },
+
+    {
+      name: (
+        <Link
+          to="/profile"
+          className="rounded-full p-2 text-gray-600 hover:text-black"
+        >
+          <FaRegUser size={20}/>
+        </Link>
+      ),
+
+      subMenu: [
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/my-shop">Shop Page</Link>,
+      ],
+    },
   ];
+
+  const subUser = [
+    {
+      name: (
+        <Link
+          to="/profile"
+          className="rounded-full p-2 text-gray-600 hover:text-black"
+        >
+          <FaRegUser size={20}/>
+        </Link>
+      ),
+
+      subMenu: [
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/my-shop">Shop Page</Link>,
+      ],
+    },
+  ]
+
 
   const [keyword, setKeyword] = useState("");
 
@@ -172,12 +201,6 @@ return (
       {/* Actions */}
       <div className="ml-auto flex items-center gap-2">
         <SubNav items={subItems} title="more" />
-        <Link
-          to="/profile"
-          className="rounded-full p-2 text-gray-600 hover:text-black"
-        >
-          <FaRegUser size={20}/>
-        </Link>
       </div>
     </div>
   </nav>

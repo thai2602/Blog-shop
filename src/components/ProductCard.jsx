@@ -6,8 +6,8 @@ export default function ProductCard ({ p }) {
 
     const formatPrice = (v) =>
     typeof v === 'number'
-      ? v.toLocaleString('vi-VN') + ' ₫'
-      : `${v} VNĐ`;
+      ? v.toLocaleString('en-US') + ' $'
+      : `${v} USD`;
 
     return (
         <Link

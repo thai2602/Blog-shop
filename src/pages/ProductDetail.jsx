@@ -90,8 +90,8 @@ export default function ProductDetail() {
             <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
             <p className="mt-2 text-2xl font-semibold text-gray-900">
               {typeof product.price === 'number'
-                ? product.price.toLocaleString('vi-VN') + ' ₫'
-                : `${product.price} VNĐ`}
+                ? product.price.toLocaleString('en-US') + ' $'
+                : `${product.price} USD`}
             </p>
 
             {product.isFeatured && (

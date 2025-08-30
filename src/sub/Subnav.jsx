@@ -4,7 +4,7 @@ export default function SubNav({ items = [], title = "Subnav" }) {
       <ul className="flex space-x-6">
         {items.map((item, index) => (
           <li key={index} className={`relative ${item.subMenu ? "group"  : ""}`}>
-            <button className="flex items-center hover:text-blue-500 transition">
+            <button className="flex items-center hover:text-blue-500 transition h-full">
               {item.name}
             </button>
 

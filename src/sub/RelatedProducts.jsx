@@ -41,7 +41,7 @@ export default function RelatedProductsVertical({ products = [], title = 'Relate
 
                   <div className="mt-1 text-sm font-semibold text-red-500">
                     {p.price != null
-                      ? p.price.toLocaleString('vi-VN', { style: 'currency', currency: '$' })
+                      ? p.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
                       : 'Contact'}
                   </div>
 

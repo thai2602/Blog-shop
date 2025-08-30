@@ -55,19 +55,13 @@ router.get("/", async (req, res) => {
         .skip((p - 1) * l)
         .limit(l)
         .select("name avatar description contact userId")
-        .populate("userId", "username email role"),
+        .populate("userId", "username email role")
+        .select("_id name slug avatar description contact userId"),
       Shop.countDocuments(filters),
     ]);
 
-    res.json({
-      items,
-      pagination: {
-        page: p,
-        limit: l,
-        total,
-        pages: Math.ceil(total / l),
-      },
-    });
+  res.json({ items, total, page: p, pages: Math.ceil(total / l) });
+
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Lỗi server" });
@@ -77,8 +71,7 @@ router.get("/", async (req, res) => {
 
 /* ----------------------- GET detail ----------------------- */
 /**
- * GET /shops/id/:id
- * populate products và albums.products (nếu có)
+ * GET /shop/id/:id
  */
 router.get("/id/:id", async (req, res) => {
   try {
@@ -100,7 +93,7 @@ router.get("/id/:id", async (req, res) => {
 
 /* ----------------------- GET my shop ----------------------- */
 /**
- * GET /shops/me  (lấy shop của user hiện tại)
+ * GET /shop/me 
  */
 router.get("/me", isAuth, async (req, res) => {
   try {
@@ -355,6 +348,9 @@ router.delete("/id/:id/albums/:albumId/products/:productId", isAuth, ownerOrAdmi
     res.status(500).json({ message: "Lỗi server" });
   }
 });
+
+
+
 
 
 
