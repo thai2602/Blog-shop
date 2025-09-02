@@ -2,6 +2,7 @@
 
 - The purpose of Blog-shop is to provide small shop owners with a dedicated platform to showcase their passion in a professional and organized way, rather than through scattered posts on social media. It also allows customers to better appreciate that dedication, thereby increasing trust and credibility 
 - Web structure: https://mm.tt/map/3805660976?t=Dso4YpxEXG
+- Short demo: https://www.youtube.com/watch?v=SdHdY6wO_-I
 - Built with **React, Vite, Tailwind, Node.js, Express, MongoDB**.
 
 ## Technologies
