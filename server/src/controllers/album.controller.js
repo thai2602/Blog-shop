@@ -82,17 +82,26 @@ export const listAlbums = async (req, res) => {
 export const getAlbumBySlug = async (req, res) => {
   try {
     const { shopId, slug } = req.params;
-    const filter = { slug };
-    if (mongoose.Types.ObjectId.isValid(shopId)) {
-      filter.shopId = new mongoose.Types.ObjectId(shopId);
-    } else {
+
+    if (!slug) {
+      return res.status(400).json({ message: "Missing slug" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(shopId)) {
       return res.status(400).json({ message: "Invalid shopId" });
     }
-    const album = await Album.findOne(filter)
+
+    const album = await Album.findOne({ shopId, slug })
       .populate({ path: "items.product", select: "name price image images slug" })
       .lean();
-  } catch {
-    res.status(500).json({ message: 'Server error' });
+
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    return res.json(album);
+  } catch (e) {
+    console.error("getAlbumBySlug error:", e);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -152,13 +161,11 @@ export const addProducts = async (req, res) => {
 
     await ensureShopOwner(album.shopId, req.user._id);
 
-    // xác thực sản phẩm thuộc shop
     let validIds;
     if ('shopId' in Product.schema.paths) {
       const products = await Product.find({ _id: { $in: productIds }, shopId: album.shopId }).select('_id').lean();
       validIds = products.map(p => p._id.toString());
     } else {
-      // fallback: kiểm tra bằng Shop.products
       const shop = await Shop.findById(album.shopId).select('products').lean();
       const set = new Set((shop?.products || []).map(String));
       validIds = productIds.filter(id => set.has(String(id)));

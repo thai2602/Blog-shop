@@ -125,16 +125,6 @@ const Shop = () => {
               )}
         </section>
       </div>
-
-
-      <div className="flex justify-end">
-        <Link
-          to="/addproduct"
-          className="inline-flex items-center rounded-xl bg-green-600 px-4 py-2 text-white font-semibold shadow-sm hover:bg-green-700 active:scale-[0.98] transition"
-        >
-          Add Item
-        </Link>
-      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom'; // + Link
+import { useParams, Link } from 'react-router-dom'; 
 import defaultImg from '../assets/default-img.jpg';
 import RelatedBlogsVertical from '../sub/RelatedBlog';
 import UserInfoCard from '../sub/UserInfoCard';

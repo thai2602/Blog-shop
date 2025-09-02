@@ -1,58 +1,40 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../lib/api"; // <-- axios instance with baseURL + auth header
+import api from "../lib/api"; // 
 
-/**
- * CreateAlbum
- * ------------------------------------------------------
- * Props:
- *  - shopId: string (required)
- *  - onSuccess?: (album) => void (optional)
- *
- * What it does:
- *  - Creates an album: POST /api/albums/shop/:shopId
- *  - (Optional) Immediately adds selected products to that album:
- *      POST /api/albums/:albumId/items  { productIds: string[] }
- *
- * Minimal payload expected by backend `createAlbum` controller:
- *  { name, slug, description? }
- *
- * NOTE: Adjust field names to match your controller if it expects
- *       additional properties (e.g. coverImageUrl, isPublic...).
- */
+
 export default function CreateAlbum({ onSuccess }) {
   const navigate = useNavigate();
   const { shopId } = useParams();
 
-  // ---------- UI state ----------
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Products to optionally add right after creation
-  const [products, setProducts] = useState([]); // fetched list
+  const [products, setProducts] = useState([]); 
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
+
+  console.log('params =', shopId, slug);
 
   // ---------- helpers ----------
   const slugify = (text) =>
     text
       .toString()
-      .normalize("NFD") // split accent from letter
-      .replace(/[\u0300-\u036f]/g, "") // remove accents
+      .normalize("NFD") 
+      .replace(/[\u0300-\u036f]/g, "") 
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9\s-]/g, "") // remove invalid chars
-      .replace(/\s+/g, "-") // spaces to dashes
-      .replace(/-+/g, "-"); // collapse dashes
+      .replace(/[^a-z0-9\s-]/g, "") 
+      .replace(/\s+/g, "-") 
+      .replace(/-+/g, "-"); 
 
-  // auto-generate slug from name (but allow manual edits)
+
   useEffect(() => {
     if (!name) return setSlug("");
     setSlug((curr) => {
-      // Only overwrite if user hasn't typed a custom slug yet
       if (!curr || curr === slugify(curr)) return slugify(name);
       return curr;
     });
@@ -66,7 +48,6 @@ export default function CreateAlbum({ onSuccess }) {
     const fetchProducts = async () => {
       try {
         setLoadingProducts(true);
-        // Adjust endpoint to your API. The idea is to list products belonging to this shop.
         const res = await api.get(`/products/shop/${shopId}`, { params: { limit: 100 } });
         setProducts(res.data || []);
       } catch (e) {
@@ -95,17 +76,14 @@ export default function CreateAlbum({ onSuccess }) {
     setError("");
 
     try {
-      // 1) Create album
       const payload = { name: name.trim(), slug: slug.trim(), description: description.trim() };
       const createRes = await api.post(`/albums/shop/${shopId}`, payload);
       const album = createRes.data;
 
-      // 2) If user preselected products, attach them now
       if (selectedProductIds.length > 0 && album?._id) {
         await api.post(`/albums/${album._id}/items`, { productIds: selectedProductIds });
       }
 
-      // 3) Navigate to album detail (adjust to your route)
       if (onSuccess) onSuccess(album);
       else navigate(`/shop/${shopId}/albums/${album?.slug || slug}`);
     } catch (err) {

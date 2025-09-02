@@ -264,7 +264,11 @@ export default function ShopHomePage() {
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               {albums.map((album) => (
-                <div key={album._id} className="rounded-lg border p-4 shadow hover:shadow-md cursor-pointer">
+                <div 
+                  key={album._id} 
+                  className="rounded-lg border p-4 shadow hover:shadow-md cursor-pointer"
+                  onClick={() => navigate(`/shop/${shop._id}/albums/${album.slug}`)}
+                  >
                   <img
                     src={album.coverImage || defaultImg}
                     alt={album.name}
