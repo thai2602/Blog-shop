@@ -39,7 +39,7 @@ Create a `.env` file before running the project.
    db.js
    index.js
 /src
-   /blog-create
+   /create
    /components
    /pages
    /sub
