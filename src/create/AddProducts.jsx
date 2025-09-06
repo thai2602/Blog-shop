@@ -22,7 +22,7 @@ const AddProduct = () => {
   useEffect(() => {
     api.get("/productCategories")
       .then(res => setCategories(res.data))
-      .catch(err => console.error("Lỗi khi tải categories:", err));
+      .catch(err => console.error("Error loading categories:", err));
   }, []);
 
   const handleChange = (e) => {
@@ -49,7 +49,7 @@ const AddProduct = () => {
     console.log(shopId)
 
     if (!shopId) {
-      alert('Thiếu shopId! Vui lòng đăng nhập hoặc chọn shop.');
+      alert('Missing shopId! Please log in or select a shop.');
       return;
     }
 
@@ -67,23 +67,23 @@ const AddProduct = () => {
       await api.post(`/products/shop/${shopId}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert('Thêm sản phẩm thành công!');
+      alert('Product added successfully!');
       navigate('/shop');
     } catch (err) {
-      console.error('Lỗi khi thêm sản phẩm:', err.response?.data || err.message);
-      alert(err.response?.data?.message || 'Lỗi khi gửi sản phẩm lên server!');
+      console.error('Error adding product:', err.response?.data || err.message);
+      alert(err.response?.data?.message || 'Error sending product to server!');
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Thêm Sản Phẩm Mới</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add New Products</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <input
           type="text"
           name="name"
-          placeholder="Tên sản phẩm"
+          placeholder="Product name"
           value={formData.name}
           onChange={handleChange}
           required
@@ -92,7 +92,7 @@ const AddProduct = () => {
 
         <textarea
           name="description"
-          placeholder="Mô tả ngắn"
+          placeholder="Short description"
           value={formData.description}
           onChange={handleChange}
           rows="2"
@@ -102,7 +102,7 @@ const AddProduct = () => {
 
         <textarea
           name="details"
-          placeholder="Chi tiết sản phẩm"
+          placeholder="Product details"
           value={formData.details}
           onChange={handleChange}
           rows="4"
@@ -113,7 +113,7 @@ const AddProduct = () => {
           <input
             type="number"
             name="price"
-            placeholder="Giá"
+            placeholder="Price"
             value={formData.price}
             onChange={handleChange}
             required
@@ -123,7 +123,7 @@ const AddProduct = () => {
           <input
             type="number"
             name="quantity"
-            placeholder="Số lượng"
+            placeholder="Quantity"
             value={formData.quantity}
             onChange={handleChange}
             required
@@ -132,7 +132,7 @@ const AddProduct = () => {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Danh mục</label>
+          <label className="block font-medium mb-1">Categories</label>
           <select
             name="category"
             value={formData.category}
@@ -140,7 +140,7 @@ const AddProduct = () => {
             required
             className="w-full p-2 border border-gray-300 rounded"
           >
-            <option value="">Chọn danh mục</option>
+            <option value="">Select category</option>
             {categories.map(cat => (
               <option key={cat._id} value={cat._id}>
                 {cat.name}
@@ -157,11 +157,11 @@ const AddProduct = () => {
             checked={formData.isFeatured}
             onChange={handleChange}
           />
-          <label htmlFor="isFeatured" className="text-sm">Sản phẩm nổi bật</label>
+          <label htmlFor="isFeatured" className="text-sm">Outstanding product</label>
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Ảnh sản phẩm</label>
+          <label className="block font-medium mb-1">Product photo</label>
           <input
             type="file"
             name="image"                
@@ -178,7 +178,7 @@ const AddProduct = () => {
           type="submit"
           className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200"
         >
-          Thêm sản phẩm
+          Add products
         </button>
       </form>
     </div>

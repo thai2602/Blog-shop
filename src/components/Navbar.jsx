@@ -24,6 +24,7 @@ export default function Navbar() {
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/addproduct">Add Product</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/create">Create Blog</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop/create">Create Shop</Link>,
+        <Link className="block px-4 py-2 hover:bg-gray-100" to="/createBlog">Create Blog</Link>,
       ],
     },
 

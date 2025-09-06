@@ -24,7 +24,7 @@ export default function AlbumDetail(props) {
       setAlbum(data);
     } catch (e) {
       console.error("getAlbum error:", e);
-      setErr(e?.response?.data?.message || "Không tải được album.");
+      setErr(e?.response?.data?.message || "Album cannot be loaded.");
     } finally {
       setLoading(false);
     }
@@ -32,7 +32,7 @@ export default function AlbumDetail(props) {
 
   useEffect(() => {
     if (!shopId || !slug) {
-      setErr("Thiếu tham số URL: shopId hoặc slug.");
+      setErr("Missing URL parameter: shopId or slug.");
       return;
     }
     load();
@@ -64,10 +64,10 @@ export default function AlbumDetail(props) {
   };
 
   if (!shopId || !slug) {
-    return <div className="p-4 text-sm text-red-600">Thiếu tham số URL: shopId hoặc slug.</div>;
+    return <div className="p-4 text-sm text-red-600">Missing URL parameter: shopId or slug.</div>;
   }
 
-  if (loading && !album) return <div className="p-4">Đang tải...</div>;
+  if (loading && !album) return <div className="p-4">Loading...</div>;
   if (err && !album)     return <div className="p-4 text-red-600">{err}</div>;
   if (!album)            return null;
 
@@ -79,7 +79,7 @@ export default function AlbumDetail(props) {
   // );
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
+    <div className="p-4 max-w-5xl mx-auto bg-white rounded shadow-sm">
       <h1 className="text-2xl font-bold">{album.name}</h1>
       {album.description && <p className="text-gray-600">{album.description}</p>}
 

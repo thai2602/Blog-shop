@@ -75,9 +75,9 @@ export default function BlogDetail() {
                 </span>
               ))}
             </div>
-            <button className="w-max rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-600">
+            {/* <button className="w-max rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-600">
               Intro
-            </button>
+            </button> */}
           </div>
         </div>
 

@@ -1,15 +1,18 @@
 import axios from "axios";
 import { API_URL } from "../config";
 
-const api = axios.create({
-  baseURL: API_URL,    
+const BASE_URL = import.meta.env.DEV ? "/" : API_URL;
 
+const api = axios.create({
+  baseURL: BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
-  config.headers["ngrok-skip-browser-warning"] = "true";
+  if (!import.meta.env.DEV) {
+    config.headers["ngrok-skip-browser-warning"] = "true";
+  }
   const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;  
+  if (t) config.headers.Authorization = `Bearer ${t}`;
   return config;
 });
 

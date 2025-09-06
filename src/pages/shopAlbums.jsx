@@ -25,15 +25,15 @@ export default function ShopAlbums({ shopId, token }) {
       <h1 className="text-2xl font-bold mb-4">Albums</h1>
 
       <form onSubmit={onCreate} className="flex gap-2 mb-4">
-        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Tên album"
+        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Album name"
                className="input input-bordered flex-1 rounded-md px-3 py-2 border" />
-        <input value={theme} onChange={e=>setTheme(e.target.value)} placeholder="Chủ đề (optional)"
+        <input value={theme} onChange={e=>setTheme(e.target.value)} placeholder="Topic (optional)"
                className="input input-bordered flex-1 rounded-md px-3 py-2 border" />
-        <button className="px-4 py-2 rounded-md border">Tạo</button>
+        <button className="px-4 py-2 rounded-md border">Create</button>
       </form>
 
       <div className="mb-3">
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Tìm album…"
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Find album…"
                className="rounded-md px-3 py-2 border w-full"
                onKeyDown={e=>e.key==='Enter' && load()} />
       </div>
@@ -44,7 +44,6 @@ export default function ShopAlbums({ shopId, token }) {
             <div className="font-semibold">{a.name}</div>
             <div className="text-sm text-gray-500">{a.theme}</div>
             <div className="text-xs mt-1">{a.productCount} products</div>
-            {/* Link to product detail */}
           </li>
         ))}
       </ul>

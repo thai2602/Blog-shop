@@ -33,7 +33,6 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
       return res.status(400).json({ message: 'Invalid shopId' });
     }
 
-    // Xác thực chủ shop
     await ensureShopOwner(shopId, req.user._id);
 
     const {
@@ -49,7 +48,7 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
     const newProduct = new Product({
-      shopId,                                 
+      shopId,
       name,
       description,
       details,
@@ -67,13 +66,13 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
     res.status(201).json(populatedProduct);
   } catch (error) {
     if (error?.code === 11000) {
-      return res.status(409).json({ message: 'Sản phẩm (slug) đã tồn tại trong shop này' });
+      return res.status(409).json({ message: 'Product (slug) already exists in this shop' });
     }
     if (['FORBIDDEN','SHOP_NOT_FOUND'].includes(error?.message)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
-    console.error('Lỗi khi tạo sản phẩm:', error);
-    res.status(500).json({ message: 'Lỗi khi tạo sản phẩm' });
+    console.error('Error while creating product:', error);
+    res.status(500).json({ message: 'Error while creating product' });
   }
 });
 
@@ -92,15 +91,15 @@ router.get('/shop/:shopId', async (req, res) => {
 
     res.json(products);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách sản phẩm theo shop:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy danh sách sản phẩm' });
+    console.error('Error while fetching products by shop:', error);
+    res.status(500).json({ message: 'Error while fetching products by shop' });
   }
 });
 
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const {
-      shopId,     
+      shopId,
       name,
       description,
       details,
@@ -111,16 +110,16 @@ router.post('/', upload.single('image'), async (req, res) => {
     } = req.body;
 
     if (!shopId || !mongoose.Types.ObjectId.isValid(shopId)) {
-      return res.status(400).json({ message: 'shopId is required/invalid' });
+      return res.status(400).json({ message: 'shopId is required or invalid' });
     }
 
-    // Nếu muốn bảo vệ endpoint này thì bật:
+    // To protect this endpoint, uncomment:
     // await ensureShopOwner(shopId, req.user._id);
 
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
     const newProduct = new Product({
-      shopId,                                  // <-- thêm shopId
+      shopId,
       name,
       description,
       details,
@@ -137,10 +136,10 @@ router.post('/', upload.single('image'), async (req, res) => {
     res.status(201).json(populatedProduct);
   } catch (error) {
     if (error?.code === 11000) {
-      return res.status(409).json({ message: 'Sản phẩm (slug) đã tồn tại trong shop này' });
+      return res.status(409).json({ message: 'Product (slug) already exists in this shop' });
     }
-    console.error('Lỗi khi tạo sản phẩm:', error);
-    res.status(500).json({ message: 'Lỗi khi tạo sản phẩm' });
+    console.error('Error while creating product:', error);
+    res.status(500).json({ message: 'Error while creating product' });
   }
 });
 
@@ -160,8 +159,8 @@ router.get('/', async (req, res) => {
 
     res.json(products);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách sản phẩm:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy danh sách sản phẩm' });
+    console.error('Error while fetching products:', error);
+    res.status(500).json({ message: 'Error while fetching products' });
   }
 });
 
@@ -172,12 +171,12 @@ router.get('/:slug', async (req, res) => {
       .populate('category', 'name slug');
 
     if (!product) {
-      return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
+      return res.status(404).json({ message: 'Product not found' });
     }
     res.json(product);
   } catch (error) {
-    console.error('Lỗi khi lấy sản phẩm theo slug:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error while fetching product by slug:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

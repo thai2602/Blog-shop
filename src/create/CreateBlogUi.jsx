@@ -20,7 +20,7 @@ const CreateBlog = () => {
   useEffect(() => {
     api.get('/categories')
       .then(res => setCategories(res.data))
-      .catch(err => console.error('Lỗi tải categories:', err));
+      .catch(err => console.error('Erro loading categories:', err));
   }, []);
 
   const handleChange = (e) => {
@@ -67,10 +67,10 @@ const CreateBlog = () => {
 
       navigate('/blog'); 
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Lỗi khi gửi bài viết';
+      const msg = err?.response?.data?.message || 'Error when submitting article';
       console.error(msg, err);
       alert(msg.includes('duplicate') || msg.includes('11000')
-        ? 'Tiêu đề đã tồn tại, hãy đổi tiêu đề khác.'
+        ? 'Title already exists, please change to another title.'
         : msg);
     } finally {
       setSubmitting(false);
@@ -85,11 +85,11 @@ const CreateBlog = () => {
 
   return (
     <div id="create-blog" className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Tạo Bài Viết Mới</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create New Post</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block font-medium mb-1">Tiêu đề</label>
+          <label className="block font-medium mb-1">Title</label>
           <input
             type="text"
             name="title"
@@ -101,7 +101,7 @@ const CreateBlog = () => {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Mô tả ngắn</label>
+          <label className="block font-medium mb-1">Short description</label>
           <textarea
             name="summary"
             value={formData.summary}
@@ -113,7 +113,7 @@ const CreateBlog = () => {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Nội dung</label>
+          <label className="block font-medium mb-1">Content</label>
           <textarea
             name="content"
             value={formData.content}
@@ -126,7 +126,7 @@ const CreateBlog = () => {
 
         {/* Chọn categories */}
         <div>
-          <label className="block font-medium mb-1">Chọn chuyên mục</label>
+          <label className="block font-medium mb-1">Select category</label>
           <div className="flex flex-wrap gap-3">
             {categories.map(cat => (
               <label key={cat._id} className="flex items-center gap-2">
@@ -161,7 +161,7 @@ const CreateBlog = () => {
           disabled={submitting}
           className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-60"
         >
-          {submitting ? 'Đang đăng...' : 'Đăng bài'}
+          {submitting ? 'Posting...' : 'Post'}
         </button>
       </form>
     </div>

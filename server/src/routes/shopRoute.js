@@ -9,23 +9,23 @@ const router = express.Router();
 /* ----------------------- helpers ----------------------- */
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// middleware: chỉ chủ shop hoặc admin mới được sửa/xoá
+// middleware: only shop owner or admin can update/delete
 async function ownerOrAdmin(req, res, next) {
   try {
     const { id } = req.params;
-    if (!isValidId(id)) return res.status(400).json({ message: "Shop id không hợp lệ" });
+    if (!isValidId(id)) return res.status(400).json({ message: "Invalid shop id" });
     const shop = await Shop.findById(id).select("userId");
-    if (!shop) return res.status(404).json({ message: "Shop không tồn tại" });
+    if (!shop) return res.status(404).json({ message: "Shop not found" });
 
     const isOwner = String(shop.userId) === String(req.user._id);
     const isAdmin = req.user?.role === "admin";
     if (!isOwner && !isAdmin) return res.status(403).json({ message: "Forbidden" });
 
-    req.shop = shop; // gắn để các handler sau dùng nếu cần
+    req.shop = shop; // attach for later handlers if needed
     next();
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 }
 
@@ -35,12 +35,7 @@ async function ownerOrAdmin(req, res, next) {
  */
 router.get("/", async (req, res) => {
   try {
-    const {
-      q,
-      userId,
-      page = 1,
-      limit = 12,
-    } = req.query;
+    const { q, userId, page = 1, limit = 12 } = req.query;
 
     const filters = {};
     if (q) filters.name = { $regex: q.trim(), $options: "i" };
@@ -60,14 +55,12 @@ router.get("/", async (req, res) => {
       Shop.countDocuments(filters),
     ]);
 
-  res.json({ items, total, page: p, pages: Math.ceil(total / l) });
-
+    res.json({ items, total, page: p, pages: Math.ceil(total / l) });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
-
 
 /* ----------------------- GET detail ----------------------- */
 /**
@@ -76,24 +69,24 @@ router.get("/", async (req, res) => {
 router.get("/id/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if (!isValidId(id)) return res.status(400).json({ message: "Shop id không hợp lệ" });
+    if (!isValidId(id)) return res.status(400).json({ message: "Invalid shop id" });
 
     const shop = await Shop.findById(id)
       .populate("userId", "username email role")
       .populate("products", "name price images isFeatured")
       .populate("albums.products", "name price images isFeatured");
 
-    if (!shop) return res.status(404).json({ message: "Shop không tồn tại" });
+    if (!shop) return res.status(404).json({ message: "Shop not found" });
     res.json(shop);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- GET my shop ----------------------- */
 /**
- * GET /shop/me 
+ * GET /shop/me
  */
 router.get("/me", isAuth, async (req, res) => {
   try {
@@ -102,31 +95,29 @@ router.get("/me", isAuth, async (req, res) => {
       .populate("albums.products", "name price images slug")
       .lean();
 
-    if (!shop) return res.status(404).json({ message: "Bạn chưa tạo shop" });
+    if (!shop) return res.status(404).json({ message: "You have not created a shop yet" });
     res.json(shop);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- CREATE ----------------------- */
 /**
  * POST /shop
- * body: { name, avatar?, images?, description?, contact? }
- * mặc định 1 user có 1 shop — nếu đã có sẽ báo 409
  */
 router.post("/", isAuth, async (req, res) => {
   try {
     const { name, avatar, images, description, contact } = req.body || {};
-    if (!name?.trim()) return res.status(400).json({ message: "Thiếu tên shop" });
+    if (!name?.trim()) return res.status(400).json({ message: "Shop name is required" });
 
     const exists = await Shop.findOne({ userId: req.user._id }).select("_id");
     if (exists) {
-    return res.status(409).json({
-        message: "Bạn đã có shop",
+      return res.status(409).json({
+        message: "You already have a shop",
         shopId: exists._id,
-    });
+      });
     }
 
     const shop = await Shop.create({
@@ -143,15 +134,11 @@ router.post("/", isAuth, async (req, res) => {
     res.status(201).json(shop);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- UPDATE ----------------------- */
-/**
- * PATCH /shops/:id
- * body: { name?, avatar?, images?, description?, contact? }
- */
 router.patch("/id/:id", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -165,45 +152,37 @@ router.patch("/id/:id", isAuth, ownerOrAdmin, async (req, res) => {
     if (contact !== undefined) payload.contact = contact;
 
     const updated = await Shop.findByIdAndUpdate(id, payload, { new: true });
-    if (!updated) return res.status(404).json({ message: "Shop không tồn tại" });
+    if (!updated) return res.status(404).json({ message: "Shop not found" });
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- DELETE ----------------------- */
-/**
- * DELETE /shops/:id
- */
 router.delete("/id/:id", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     await Shop.findByIdAndDelete(id);
-    res.json({ message: "Đã xoá shop" });
+    res.json({ message: "Shop deleted successfully" });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- PRODUCTS IN SHOP ----------------------- */
-/**
- * POST /shops/:id/products
- * body: { productIds: string[] }  (thêm vào shop.products, không trùng)
- */
 router.post("/id/:id/products", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { productIds } = req.body || {};
     if (!Array.isArray(productIds) || productIds.length === 0) {
-      return res.status(400).json({ message: "Thiếu productIds" });
+      return res.status(400).json({ message: "productIds are required" });
     }
 
-    // (tuỳ) kiểm tra tồn tại product
     const validIds = productIds.filter(isValidId);
-    if (!validIds.length) return res.status(400).json({ message: "productIds không hợp lệ" });
+    if (!validIds.length) return res.status(400).json({ message: "Invalid productIds" });
 
     const updated = await Shop.findByIdAndUpdate(
       id,
@@ -213,17 +192,14 @@ router.post("/id/:id/products", isAuth, ownerOrAdmin, async (req, res) => {
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-/**
- * DELETE /shops/:id/products/:productId
- */
 router.delete("/id/:id/products/:productId", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id, productId } = req.params;
-    if (!isValidId(productId)) return res.status(400).json({ message: "productId không hợp lệ" });
+    if (!isValidId(productId)) return res.status(400).json({ message: "Invalid productId" });
 
     const updated = await Shop.findByIdAndUpdate(
       id,
@@ -233,19 +209,16 @@ router.delete("/id/:id/products/:productId", isAuth, ownerOrAdmin, async (req, r
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 /* ----------------------- ALBUMS ----------------------- */
-/**
- * POST /shops/:id/albums     body: { name }
- */
 router.post("/id/:id/albums", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body || {};
-    if (!name?.trim()) return res.status(400).json({ message: "Thiếu tên album" });
+    if (!name?.trim()) return res.status(400).json({ message: "Album name is required" });
 
     const updated = await Shop.findByIdAndUpdate(
       id,
@@ -255,35 +228,29 @@ router.post("/id/:id/albums", isAuth, ownerOrAdmin, async (req, res) => {
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-/**
- * PATCH /shops/:id/albums/:albumId   body: { name }
- */
 router.patch("/id/:id/albums/:albumId", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id, albumId } = req.params;
     const { name } = req.body || {};
-    if (!name?.trim()) return res.status(400).json({ message: "Thiếu tên album" });
+    if (!name?.trim()) return res.status(400).json({ message: "Album name is required" });
 
     const updated = await Shop.findOneAndUpdate(
       { _id: id, "albums._id": albumId },
       { $set: { "albums.$.name": name.trim() } },
       { new: true }
     );
-    if (!updated) return res.status(404).json({ message: "Album không tồn tại" });
+    if (!updated) return res.status(404).json({ message: "Album not found" });
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-/**
- * DELETE /shops/:id/albums/:albumId
- */
 router.delete("/id/:id/albums/:albumId", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id, albumId } = req.params;
@@ -295,63 +262,51 @@ router.delete("/id/:id/albums/:albumId", isAuth, ownerOrAdmin, async (req, res) 
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-/**
- * POST /shops/:id/albums/:albumId/products
- * body: { productIds: string[] }
- */
 router.post("/id/:id/albums/:albumId/products", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id, albumId } = req.params;
     const { productIds } = req.body || {};
     if (!Array.isArray(productIds) || productIds.length === 0) {
-      return res.status(400).json({ message: "Thiếu productIds" });
+      return res.status(400).json({ message: "productIds are required" });
     }
     const validIds = productIds.filter(isValidId);
-    if (!validIds.length) return res.status(400).json({ message: "productIds không hợp lệ" });
+    if (!validIds.length) return res.status(400).json({ message: "Invalid productIds" });
 
     const updated = await Shop.findOneAndUpdate(
       { _id: id, "albums._id": albumId },
       { $addToSet: { "albums.$.products": { $each: validIds } } },
       { new: true }
     ).populate("albums.products", "name price images");
-    if (!updated) return res.status(404).json({ message: "Album không tồn tại" });
+    if (!updated) return res.status(404).json({ message: "Album not found" });
 
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-/**
- * DELETE /shops/:id/albums/:albumId/products/:productId
- */
 router.delete("/id/:id/albums/:albumId/products/:productId", isAuth, ownerOrAdmin, async (req, res) => {
   try {
     const { id, albumId, productId } = req.params;
-    if (!isValidId(productId)) return res.status(400).json({ message: "productId không hợp lệ" });
+    if (!isValidId(productId)) return res.status(400).json({ message: "Invalid productId" });
 
     const updated = await Shop.findOneAndUpdate(
       { _id: id, "albums._id": albumId },
       { $pull: { "albums.$.products": productId } },
       { new: true }
     ).populate("albums.products", "name price images");
-    if (!updated) return res.status(404).json({ message: "Album không tồn tại" });
+    if (!updated) return res.status(404).json({ message: "Album not found" });
 
     res.json(updated);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-
-
-
-
 
 export default router;

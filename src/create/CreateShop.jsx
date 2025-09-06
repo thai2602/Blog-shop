@@ -22,7 +22,6 @@ export default function CreateShop() {
     },
   });
 
-  // chặn vào trang nếu chưa đăng nhập
   useEffect(() => {
     const t = localStorage.getItem("token");
     if (!t) navigate("/login");
@@ -55,11 +54,11 @@ export default function CreateShop() {
 
   const validate = () => {
     if (!form.name.trim()) {
-      addToast("Tên shop là bắt buộc", "error");
+      addToast("Shop name is required", "error");
       return false;
     }
     if (form.contact.email && !/^\S+@\S+\.\S+$/.test(form.contact.email)) {
-      addToast("Email không hợp lệ", "error");
+      addToast("Invalid email", "error");
       return false;
     }
     return true;
@@ -72,7 +71,7 @@ export default function CreateShop() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-        addToast("Bạn cần đăng nhập trước", "error");
+        addToast("You need to log in first", "error");
         navigate("/login");
         return;
     }
@@ -96,20 +95,18 @@ export default function CreateShop() {
         headers: { Authorization: `Bearer ${token}` },
         });
 
-        addToast("Tạo shop thành công!", "success");
-        const created = res.data; // backend trả về object shop
+        addToast("Create shop successfully!", "success");
+        const created = res.data;
         navigate(`/shop/${created._id}`);
         return;
     } catch (err) {
-        // Nếu backend chặn 1 user = 1 shop
         if (err.response?.status === 409) {
         const shopId = err.response.data?.shopId;
         if (shopId) {
-            addToast("Bạn đã có shop, chuyển sang trang shop.", "info");
+            addToast("You already have a shop, go to the shop page.", "info");
             navigate(`/shop/${shopId}`);
             return;
         }
-        // Fallback: tự lấy shop của mình (NHỚ gắn Authorization)
         try {
             const me = await api.get("/shop/me", {
             headers: { Authorization: `Bearer ${token}` },
@@ -117,11 +114,11 @@ export default function CreateShop() {
             navigate(`/shop/${me.data._id}`);
             return;
         } catch (e2) {
-            const msg = e2.response?.data?.message || "Không thể lấy shop hiện có";
+            const msg = e2.response?.data?.message || "Cannot get existing shop";
             addToast(msg, "error");
         }
         } else {
-        const msg = err.response?.data?.message || "Không thể tạo shop";
+        const msg = err.response?.data?.message || "Cannot create shop";
         addToast(msg, "error");
         }
     } finally {
@@ -133,17 +130,17 @@ export default function CreateShop() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-3xl mx-auto bg-white shadow rounded-xl p-6">
-        <h1 className="text-2xl font-bold mb-6">Tạo Shop</h1>
+        <h1 className="text-2xl font-bold mb-6">Create Shop</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Tên shop */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tên shop *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Shop name *</label>
             <input
               name="name"
               value={form.name}
               onChange={onChange}
-              placeholder="VD: Huy Store"
+              placeholder="Ex: Cake Bakery"
               className="w-full border rounded-md p-2"
               required
             />
@@ -217,12 +214,12 @@ export default function CreateShop() {
 
           {/* Mô tả */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
               name="description"
               value={form.description}
               onChange={onChange}
-              placeholder="Giới thiệu ngắn về shop..."
+              placeholder="Brief introduction about the shop..."
               className="w-full border rounded-md p-2"
               rows={4}
             />
@@ -231,7 +228,7 @@ export default function CreateShop() {
           {/* Contact */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
               <input
                 name="contact.phone"
                 value={form.contact.phone}
@@ -262,12 +259,12 @@ export default function CreateShop() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <input
                 name="contact.address"
                 value={form.contact.address}
                 onChange={onChange}
-                placeholder="Số nhà, đường, quận/huyện, tỉnh/thành"
+                placeholder="House number, street, district, province/city"
                 className="w-full border rounded-md p-2"
               />
             </div>
@@ -280,14 +277,14 @@ export default function CreateShop() {
               disabled={loading}
               className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
             >
-              {loading ? "Đang tạo..." : "Tạo shop"}
+              {loading ? "Creating..." : "Create shop"}
             </button>
             <button
               type="button"
               onClick={() => navigate(-1)}
               className="px-5 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
             >
-              Huỷ
+              Cancel
             </button>
           </div>
         </form>

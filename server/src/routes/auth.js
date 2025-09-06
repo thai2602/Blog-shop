@@ -23,33 +23,33 @@ router.post('/register', async (req, res) => {
     const { username, email, password } = req.body || {};
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: 'Thiếu username, email hoặc password' });
+      return res.status(400).json({ message: 'Missing username, email or password' });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: 'Mật khẩu phải >= 6 ký tự' });
+      return res.status(400).json({ message: 'Password must be >= 6 characters' });
     }
 
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-      return res.status(409).json({ message: 'Username đã được sử dụng' });
+      return res.status(409).json({ message: 'Username already in use' });
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: 'Email đã được sử dụng' });
+      return res.status(409).json({ message: 'Email already in use' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    return res.status(201).json({ message: 'Đăng ký thành công' });
+    return res.status(201).json({ message: 'Registered successfully' });
   } catch (error) {
     if (error?.code === 11000) {
       const field = Object.keys(error.keyValue || {})[0] || 'field';
-      return res.status(409).json({ message: `${field} đã được sử dụng` });
+      return res.status(409).json({ message: `${field} has been used` });
     }
-    console.error('Lỗi khi đăng ký:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error while registering:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -58,17 +58,17 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
     if (!email || !password) {
-      return res.status(400).json({ message: 'Thiếu email hoặc password' });
+      return res.status(400).json({ message: 'Missing email or password' });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Sai email hoặc mật khẩu' });
+      return res.status(400).json({ message: 'Wrong email or password' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Sai email hoặc mật khẩu' });
+      return res.status(400).json({ message: 'Wrong email or password' });
     }
 
     const token = jwt.sign(
@@ -77,10 +77,10 @@ router.post('/login', async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES || '1d' }
     );
 
-    return res.json({ message: 'Đăng nhập thành công', token });
+    return res.json({ message: 'Log in successfully', token });
   } catch (error) {
-    console.error('Lỗi khi đăng nhập:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error while logging in:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -90,11 +90,11 @@ router.get('/profile', isAuth, async (req, res) => {
     if (!uid) return res.status(401).json({ message: 'Not authenticated' });
 
     const user = await User.findById(uid).select('-password');
-    if (!user) return res.status(404).json({ message: 'User không tồn tại' });
+    if (!user) return res.status(404).json({ message: 'User does not exist' });
     return res.json(user);
   } catch (error) {
-    console.error('Lỗi khi lấy profile:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error when getting profile:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -103,16 +103,16 @@ router.get('/profile/:id', async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({ message: 'User id không hợp lệ' });
+      return res.status(400).json({ message: 'Invalid user id' });
     }
 
     const user = await User.findById(id).select('-password');
-    if (!user) return res.status(404).json({ message: 'User không tồn tại' });
+    if (!user) return res.status(404).json({ message: 'User does not exist' });
 
     return res.json(user);
   } catch (error) {
-    console.error('Lỗi khi lấy profile theo id:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error when getting profile by id:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -120,7 +120,7 @@ router.get('/profile/:id/posts', async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({ message: 'User id không hợp lệ' });
+      return res.status(400).json({ message: 'Invalid user id' });
     }
 
     const page  = Math.max(parseInt(req.query.page)  || 1, 1);
@@ -154,8 +154,8 @@ router.get('/profile/:id/posts', async (req, res) => {
       items,
     });
   } catch (error) {
-    console.error('Lỗi khi lấy posts theo user:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error when getting posts by user:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -163,7 +163,7 @@ router.get('/profile/:id/summary', async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({ message: 'User id không hợp lệ' });
+      return res.status(400).json({ message: 'Invalid user id' });
     }
 
     const [totalPosts, distinctCats] = await Promise.all([
@@ -180,8 +180,8 @@ router.get('/profile/:id/summary', async (req, res) => {
 
     return res.json({ totalPosts, totalCategories });
   } catch (error) {
-    console.error('Lỗi summary profile:', error);
-    return res.status(500).json({ message: 'Lỗi server' });
+    console.error('Summary profile error:', error);
+    return res.status(500).json({ message: 'server error' });
   }
 });
 

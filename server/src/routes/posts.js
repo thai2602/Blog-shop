@@ -1,4 +1,3 @@
-// server/routes/posts.js
 import mongoose from 'mongoose';
 import express from 'express';
 import multer from 'multer';
@@ -9,8 +8,6 @@ import { fileURLToPath } from 'url';
 import Post from '../models/posts.js';
 import { isAuth } from '../middlewares/auth.js'
 import Shop from '../models/shop.js';
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +23,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage }); 
-
 
 // POST /posts
 router.post('/', isAuth, upload.single('image'), async (req, res) => {
@@ -53,14 +49,13 @@ router.post('/', isAuth, upload.single('image'), async (req, res) => {
     res.status(201).json(newPost);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Lỗi khi tạo bài viết' });
+    res.status(500).json({ message: 'Error while creating post' });
   }
 });
 
-
 // GET /posts
 router.get('/', async (req, res) => {
-   try {
+  try {
     const { category, shop } = req.query;
     const filter = {};
     if (category) filter.categories = category;
@@ -77,22 +72,21 @@ router.get('/', async (req, res) => {
 
     res.json(posts);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách bài viết:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy danh sách bài viết' });
+    console.error('Error while fetching post list:', error);
+    res.status(500).json({ message: 'Error while fetching post list' });
   }
 });
 
+// GET /posts/me
 router.get('/me', isAuth, async (req, res) => {
   try {
     const userId = req.user._id;
-
 
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 10, 100);
     const skip = (page - 1) * limit;
 
     const { category, search } = req.query;
-
     const filter = { userId };
 
     if (category) {
@@ -123,8 +117,8 @@ router.get('/me', isAuth, async (req, res) => {
       items,
     });
   } catch (error) {
-    console.error('Lỗi khi lấy posts của tôi:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy bài viết của bạn' });
+    console.error('Error while fetching my posts:', error);
+    res.status(500).json({ message: 'Error while fetching your posts' });
   }
 });
 
@@ -141,15 +135,16 @@ router.get('/:slug', async (req, res) => {
       .populate({ path: 'shop', select: 'name slug avatar' }); 
 
     if (!post) {
-      return res.status(404).json({ message: 'Không tìm thấy bài viết' });
+      return res.status(404).json({ message: 'Post not found' });
     }
     res.json(post);
   } catch (error) {
-    console.error('Lỗi khi lấy bài viết theo slug:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error('Error while fetching post by slug:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
+// PATCH /posts/:id
 router.patch('/:id', isAuth, async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,10 +157,10 @@ router.patch('/:id', isAuth, async (req, res) => {
         update.shop = null; 
       } else {
         if (!mongoose.isValidObjectId(shop)) {
-          return res.status(400).json({ message: 'shop id không hợp lệ' });
+          return res.status(400).json({ message: 'Invalid shop id' });
         }
         const exists = await Shop.findById(shop).select('_id');
-        if (!exists) return res.status(404).json({ message: 'Shop không tồn tại' });
+        if (!exists) return res.status(404).json({ message: 'Shop not found' });
         update.shop = shop;
       }
     }
@@ -175,13 +170,12 @@ router.patch('/:id', isAuth, async (req, res) => {
       .populate({ path: 'categories', select: 'name slug' })
       .populate({ path: 'shop', select: 'name slug avatar' });
 
-    if (!post) return res.status(404).json({ message: 'Post không tồn tại' });
+    if (!post) return res.status(404).json({ message: 'Post not found' });
     res.json(post);
   } catch (error) {
-    console.error('Lỗi khi cập nhật post:', error);
-    res.status(500).json({ message: 'Lỗi khi cập nhật bài viết' });
+    console.error('Error while updating post:', error);
+    res.status(500).json({ message: 'Error while updating post' });
   }
 });
-
 
 export default router;

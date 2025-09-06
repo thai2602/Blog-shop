@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../lib/api"; // 
+import api from "../lib/api";
 
 
 export default function CreateAlbum({ onSuccess }) {
@@ -88,7 +88,7 @@ export default function CreateAlbum({ onSuccess }) {
       else navigate(`/shop/${shopId}/albums/${album?.slug || slug}`);
     } catch (err) {
       console.error(err);
-      const msg = err?.response?.data?.message || "Tạo album thất bại. Vui lòng thử lại.";
+      const msg = err?.response?.data?.message || "Album creation failed. Please try again.";
       setError(msg);
     } finally {
       setIsSubmitting(false);
@@ -102,36 +102,36 @@ export default function CreateAlbum({ onSuccess }) {
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-4 rounded-xl shadow">
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium mb-1">Tên album <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium mb-1">Album Name <span className="text-red-500">*</span></label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ví dụ: Hot Deals 9.9"
+            placeholder="Ex: Hot Deals Summer Days"
             className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
           />
         </div>
 
         {/* Slug */}
         <div>
-          <label className="block text-sm font-medium mb-1">Slug (URL) <span className="text-gray-500 text-xs">tự tạo từ tên, có thể sửa</span></label>
+          <label className="block text-sm font-medium mb-1">Slug (URL) <span className="text-gray-500 text-xs">auto generated from name, editable</span></label>
           <input
             type="text"
             value={slug}
             onChange={(e) => setSlug(slugify(e.target.value))}
-            placeholder="hot-deals-9-9"
+            placeholder="hot-deals-summer-days"
             className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-1">Mô tả</label>
+          <label className="block text-sm font-medium mb-1">Describe</label>
           <textarea
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Mô tả ngắn về album..."
+            placeholder="Short description of the album..."
             className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
           />
         </div>
@@ -139,13 +139,13 @@ export default function CreateAlbum({ onSuccess }) {
         {/* Optional pick products */}
         <div>
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium">Chọn sản phẩm thêm vào ngay</label>
-            {loadingProducts && <span className="text-xs text-gray-500">Đang tải sản phẩm...</span>}
+            <label className="block text-sm font-medium">Select product add now</label>
+            {loadingProducts && <span className="text-xs text-gray-500">Loading products...</span>}
           </div>
 
           <div className="max-h-56 overflow-auto mt-2 rounded border border-gray-200 divide-y">
             {products?.length === 0 && !loadingProducts && (
-              <div className="p-3 text-sm text-gray-500">Không có sản phẩm hoặc chưa tải được.</div>
+              <div className="p-3 text-sm text-gray-500">No products or downloads available.</div>
             )}
             {products?.map((p) => (
               <label key={p._id} className="flex items-center gap-3 p-3 text-sm hover:bg-gray-50">
@@ -159,7 +159,7 @@ export default function CreateAlbum({ onSuccess }) {
             ))}
           </div>
           {selectedProductIds.length > 0 && (
-            <div className="text-xs text-gray-600 mt-1">Đã chọn {selectedProductIds.length} sản phẩm</div>
+            <div className="text-xs text-gray-600 mt-1">Selected {selectedProductIds.length} products</div>
           )}
         </div>
 
@@ -177,7 +177,7 @@ export default function CreateAlbum({ onSuccess }) {
             disabled={!canSubmit || isSubmitting}
             className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
           >
-            {isSubmitting ? "Đang tạo..." : "Tạo album"}
+            {isSubmitting ? "Creating..." : "Create albums"}
           </button>
 
           <button
@@ -185,7 +185,7 @@ export default function CreateAlbum({ onSuccess }) {
             onClick={() => navigate(-1)}
             className="rounded-md border px-4 py-2"
           >
-            Hủy
+            Cancel
           </button>
         </div>
       </form>
