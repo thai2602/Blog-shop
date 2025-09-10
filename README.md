@@ -4,6 +4,7 @@
 - Web structure: https://mm.tt/map/3805660976?t=Dso4YpxEXG
 - Short demo: https://www.youtube.com/watch?v=SdHdY6wO_-I
 - Built with **React, Vite, Tailwind, Node.js, Express, MongoDB**.
+- I will rebuild this project because it very hard to update right now.
 
 ## Technologies
 - Frontend: React + Vite + Tailwind
