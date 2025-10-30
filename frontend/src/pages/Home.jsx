@@ -122,6 +122,10 @@ const Home = () => {
         </div>
       </section>
 
+      <div className="relative flex bg-[#4C2B1C] bg-opacity-90 h-[600px]">
+        <div className="absolute  inset-0 bg-gradient-to-t from-black/20 via-black/0 to-black/20  "/>
+      </div>
+
       <div className="max-w-7xl mx-auto px-6 py-12 space-y-16">
         {/* Featured Products */}
         <section>
@@ -234,7 +238,7 @@ const Home = () => {
                           <Link
                             to={`/blog/${post.slug}`}
                             className="mt-4 inline-flex items-center rounded-full bg-white px-5 py-2 text-sm font-semibold text-black hover:bg-gray-200"
-                          >
+                            >
                             Read more
                           </Link>
                         )}

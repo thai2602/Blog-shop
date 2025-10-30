@@ -14,6 +14,23 @@ export default function Navbar() {
       : "text-gray-300 hover:text-white";
 
   const subItems = [
+     {
+      name: (
+        <Link
+          to="/login"
+          className="
+            relative inline-flex items-center h-10 leading-none
+            text-gray-700 hover:text-black
+            [&.active]:text-black [&.active]:after:w-full
+            after:content-[''] after:absolute after:left-0 after:bottom-0
+            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
+          "
+        >
+          <MdOutlineLogin size={20}/>
+        </Link>
+      )
+    },
+
     {
       name: (
         <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-700 hover:text-white hover:bg-gray-700">
@@ -22,7 +39,6 @@ export default function Navbar() {
       ),
       subMenu: [
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/addproduct">Add Product</Link>,
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/create">Create Blog</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/shop/create">Create Shop</Link>,
         <Link className="block px-4 py-2 hover:bg-gray-100" to="/createBlog">Create Blog</Link>,
       ],
@@ -32,7 +48,7 @@ export default function Navbar() {
       name: (
         <Link
           to="/profile"
-          className="rounded-full p-2 text-gray-600 hover:text-black"
+          className="rounded-full pr-4 text-gray-600 hover:text-black"
         >
           <FaRegUser size={20}/>
         </Link>
@@ -44,22 +60,6 @@ export default function Navbar() {
     },
   ];
 
-  const subUser = [
-    {
-      name: (
-        <Link
-          to="/profile"
-          className="rounded-full p-2 text-gray-600 hover:text-black"
-        >
-          <FaRegUser size={20}/>
-        </Link>
-      ),
-
-      subMenu: [
-        <Link className="block px-4 py-2 hover:bg-gray-100" to="/my-shop">Shop Page</Link>,
-      ],
-    },
-  ]
 
 
   const [keyword, setKeyword] = useState("");
@@ -144,7 +144,7 @@ return (
 
 
       {/* Menu */}
-      <div className="hidden md:flex h-16 items-center gap-6 text-md font-semibold">
+      <div className="hidden md:flex h-16 items-center gap-6 text-md font-semibold px-8">
         <Link
           to="/"
           className="
@@ -168,7 +168,7 @@ return (
             after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
           "
         >
-          Shop
+          Store
         </Link>
 
         <Link
@@ -184,8 +184,8 @@ return (
           Blog
         </Link>
 
-        <Link
-          to="/login"
+         <Link
+          to="/albums"
           className="
             relative inline-flex items-center h-10 leading-none
             text-gray-700 hover:text-black
@@ -194,8 +194,24 @@ return (
             after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
           "
         >
-          <MdOutlineLogin size={20}/>
+          Albums
         </Link>
+
+
+        <Link
+          to="/"
+          className="
+            relative inline-flex items-center h-10 leading-none
+            text-gray-700 hover:text-black
+            [&.active]:text-black [&.active]:after:w-full
+            after:content-[''] after:absolute after:left-0 after:bottom-0
+            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
+          "
+        >
+          Contact
+        </Link>
+
+        
       </div>
 
 

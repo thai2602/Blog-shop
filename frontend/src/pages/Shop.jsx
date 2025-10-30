@@ -39,7 +39,7 @@ const Shop = () => {
   return (
     <div id="shop-page" className="space-y-8">
       <header className="pt-2">
-        <h1 className="text-3xl font-bold tracking-tight">Shop</h1>
+        {/* <h1 className="text-3xl font-bold tracking-tight">shop</h1> */}
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">

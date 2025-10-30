@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaPhone, FaEnvelope, FaFacebook } from "react-icons/fa";
-import defaultImg from "../assets/default-img.jpg";
 import { listAlbums } from "../lib/albumsApi.js";
 import api from "../lib/api";
 import { API_URL } from "../config";
 
+import defaultImg from "../assets/default-img.jpg";
+import defaultBG from "../assets/backrough-default.jpg";
 import ProductCard from "../components/ProductCard.jsx";
+import IsolatedArticle from "../components/Article.jsx";
+import CoffeeDesireStory from "../components/ArticleTemplate.jsx";
 
 export default function ShopHomePage() {
   const navigate = useNavigate();
@@ -25,6 +28,8 @@ export default function ShopHomePage() {
   const [albums, setAlbums] = useState([]);
   const [loadingAlbum, setLoadingAlbum] = useState(false);
 
+  const storyLink = "https://docs.google.com/document/d/1i36LFS0K7pns89Nci-deUX2WTqZhbZJS/edit?usp=sharing&ouid=105937149956991319130&rtpof=true&sd=true"
+
   const toAbsUrl = (url) => {
     if (!url) return "";
     if (url.startsWith("/uploads/")) return `${API_URL}${url}`;
@@ -41,7 +46,7 @@ export default function ShopHomePage() {
         if (!cancel) setShop(res.data);
       } catch (err) {
         if (!cancel) {
-          const msg = err?.response?.data?.message || "Không thể tải shop";
+          const msg = err?.response?.data?.message || "Load shop is fail";
           setShopError(msg);
           setShop(null);
         }
@@ -91,7 +96,7 @@ export default function ShopHomePage() {
       .map((s) => s && s.trim())
       .filter(Boolean)
       .map(toAbsUrl);
-    return raw.length ? raw : [defaultImg];
+    return raw.length ? raw : [defaultBG];
   })();
 
   const slidesLen = slides.length;
@@ -204,7 +209,7 @@ export default function ShopHomePage() {
           </div>
 
           {/* Tabs */}
-          <div className="sticky top-0 z-10 mt-6 bg-white/80 backdrop-blur">
+          <div className="sticky top-0 z-10 mt-6 px-4 bg-white/80 backdrop-blur">
             <div className="mx-auto max-w-4xl border-b px-1 sm:px-2">
               <div className="flex gap-6">
                 {["products", "story", "album"].map((tab) => {
@@ -248,10 +253,8 @@ export default function ShopHomePage() {
 
         {activeTab === "story" && (
           <section className="rounded-xl bg-white p-6 shadow">
-            <h2 className="mb-3 text-xl font-semibold">Our Story</h2>
-            <p className="leading-relaxed text-gray-600">
-              {shop.description || "Chưa có mô tả."}
-            </p>
+            <CoffeeDesireStory />
+            
           </section>
         )}
 
@@ -286,7 +289,7 @@ export default function ShopHomePage() {
 
             <button
               onClick={() => navigate(`/shop/${shop._id}/albums/new`)}
-              className="mt-6 rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
+              className="mt-6 rounded-lg bg-gray-800 px-4 py-2 font-medium text-white hover:bg-gray-600"
             >
               + New album
             </button>

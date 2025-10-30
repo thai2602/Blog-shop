@@ -17,6 +17,7 @@ import ShopAlbums from './pages/shopAlbums';
 import AlbumDetail from './pages/AlbumDetail';
 import CreateShop from './create/CreateShop';
 import CreateAlbum from './create/CreateAlbum';
+import Albums from './pages/Albums';
 
 
 //navigate to user shop
@@ -51,6 +52,7 @@ function App() {
               <Route path="/product/:slug" element={<ProductDetail />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogDetail />} />
+              <Route path="/albums" element={<Albums />} />
               <Route path="/createBlog" element={<CreateBlog />} />
               <Route path="/addproduct" element={<AddProduct />} />
               <Route path="/profile" element={<Profile />} />

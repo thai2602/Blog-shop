@@ -1,4 +1,5 @@
 export default {
+  important: true,
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
@@ -10,5 +11,5 @@ export default {
     },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 }
