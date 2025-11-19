@@ -28,7 +28,7 @@ Create a `.env` file before running the project.
 - `VITE_API_BASE` → API base URL (default: http://localhost:5000)
 
 ## Running the Project
-- BE: node ./sever/src/index.js
+- BE: npm run server
 - FE: npm run dev
 
 ## Project Structure
