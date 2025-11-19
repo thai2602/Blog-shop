@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import Post from '../models/posts.js';
 import { isAuth } from '../middlewares/auth.js'
 import Shop from '../models/shop.js';
+import { getFileUrl } from '../utils/fileHelper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +29,7 @@ const upload = multer({ storage });
 router.post('/', isAuth, upload.single('image'), async (req, res) => {
   try {
     const { title, summary, content, categories } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    const imageUrl = req.file ? getFileUrl(`uploads/${req.file.filename}`) : '';
 
     let categoryArray = [];
     if (categories) {

@@ -8,9 +8,7 @@ export default function toAbsUrl(url) {
     u = u.replace(/\\/g, "/");
 
     if (u.startsWith("/uploads/")) {
-      return import.meta.env.DEV
-        ? u
-        : `${API_URL.replace(/\/+$/, "")}${u}`;
+      return `${API_URL.replace(/\/+$/, "")}${u}`;
     }
 
     if (/^https?:\/\//i.test(u)) {

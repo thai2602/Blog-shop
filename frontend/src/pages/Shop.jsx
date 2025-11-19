@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import SubNav from '../sub/Subnav';
 import { Link } from 'react-router-dom';
-import defaultImg from '../assets/default-img.jpg';
 import { CiShop } from "react-icons/ci";
 import { TbCategory } from "react-icons/tb";
 import { BiSolidOffer } from "react-icons/bi";
 import { FaShippingFast } from "react-icons/fa";
-import { API_URL } from '../config';
 import api from "../lib/api";   
 
 import ProductCard from '../components/ProductCard';
@@ -18,11 +17,92 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sortBy, setSortBy] = useState('newest');
 
+  // Filter by category
   const filteredProducts = selectedCategory
     ? products.filter(p => p?.category?.name === selectedCategory)
     : products;
 
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return (a.price || 0) - (b.price || 0);
+      case 'price-high':
+        return (b.price || 0) - (a.price || 0);
+      case 'newest':
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      case 'oldest':
+        return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+      case 'name-asc':
+        return (a.name || '').localeCompare(b.name || '');
+      case 'name-desc':
+        return (b.name || '').localeCompare(a.name || '');
+      default:
+        return 0;
+    }
+  });
+
+  const getSortLabel = () => {
+    switch (sortBy) {
+      case 'price-low': return 'Price: Low to High';
+      case 'price-high': return 'Price: High to Low';
+      case 'newest': return 'Newest First';
+      case 'oldest': return 'Oldest First';
+      case 'name-asc': return 'Name: A to Z';
+      case 'name-desc': return 'Name: Z to A';
+      default: return 'Sort By';
+    }
+  };
+  
+  const subItems = [
+    {
+      name: (
+        <span className='px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition'>
+          {getSortLabel()}
+        </span>
+      ),
+      subMenu: [
+        <button 
+          onClick={() => setSortBy('price-low')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'price-low' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Price: Low to High
+        </button>,
+        <button 
+          onClick={() => setSortBy('price-high')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'price-high' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Price: High to Low
+        </button>,
+        <button 
+          onClick={() => setSortBy('newest')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'newest' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Newest First
+        </button>,
+        <button 
+          onClick={() => setSortBy('oldest')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'oldest' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Oldest First
+        </button>,
+        <button 
+          onClick={() => setSortBy('name-asc')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'name-asc' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Name: A to Z
+        </button>,
+        <button 
+          onClick={() => setSortBy('name-desc')}
+          className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'name-desc' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+        >
+          Name: Z to A
+        </button>,
+      ]
+    }
+  ]
   useEffect(() => {
     Promise.all([
       api.get(`/products`),
@@ -38,9 +118,13 @@ const Shop = () => {
 
   return (
     <div id="shop-page" className="space-y-8">
-      <header className="pt-2">
-        {/* <h1 className="text-3xl font-bold tracking-tight">shop</h1> */}
-      </header>
+      {/* Header */}
+      <div className="bg-white shadow-sm rounded-xl">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Store</h1>
+          <p className="text-gray-600">Buy everything you want!</p>
+        </div>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
         {/* SIDEBAR */}
@@ -97,8 +181,12 @@ const Shop = () => {
 
         {/* PRODUCTS */}
         <section className="min-w-0">
-          <div className="flex items-end justify-between">
-            <h2 className="text-2xl font-bold">Products</h2>
+          <div className="inline-block justify-between w-full pr-4">
+            <div className='flex w-full justify-between mb-4'>
+              <h2 className="text-2xl font-bold">Products</h2>
+              <div className= 'right-full'> <SubNav items={subItems} title='onclick'/> </div>
+            </div>
+            
             {selectedCategory && (
               <span className="text-sm text-gray-500">
                 Filter by: <span className="font-medium text-gray-700">{selectedCategory}</span>
@@ -116,13 +204,17 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : (   
+          ) : sortedProducts.length > 0 ? (   
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredProducts.map((p) => (
+                  {sortedProducts.map((p) => (
                     <ProductCard key = {p._id} p = {p} />
                   ))}
               </div>
-              )}
+          ) : (
+            <div className="mt-12 text-center">
+              <p className="text-gray-500 text-lg">No products found.</p>
+            </div>
+          )}
         </section>
       </div>
     </div>

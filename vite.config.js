@@ -13,38 +13,11 @@ export default defineConfig(({ mode }) => {
       host: true,
       allowedHosts: ['.ngrok-free.app'],
       proxy: {
-        '/posts': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/products': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/users': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/categories': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/productCategories': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/albums': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/shop': {
-            target: API_URL,
-            changeOrigin: true,
-          },
-        '/uploads': {
-            target: API_URL,
-            changeOrigin: true,
-          },
+        '/api': {
+          target: API_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
       },
     },
   }

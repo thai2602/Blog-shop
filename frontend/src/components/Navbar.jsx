@@ -147,66 +147,66 @@ return (
       <div className="hidden md:flex h-16 items-center gap-6 text-md font-semibold px-8">
         <Link
           to="/"
-          className="
+          className={`
             relative inline-flex items-center h-10 leading-none
-            text-gray-700 hover:text-black
-            [&.active]:text-black [&.active]:after:w-full
+            text-gray-700 hover:text-black transition-all
             after:content-[''] after:absolute after:left-0 after:bottom-0
-            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
-          "
+            after:h-[3px] after:w-0 after:bg-black after:transition-all after:rounded-full
+            ${pathname === '/' ? 'text-black font-bold text-lg after:w-full' : ''}
+          `}
         >
           Home
         </Link>
 
         <Link
           to="/shop"
-          className="
+          className={`
             relative inline-flex items-center h-10 leading-none
-            text-gray-700 hover:text-black
-            [&.active]:text-black [&.active]:after:w-full
+            text-gray-700 hover:text-black transition-all
             after:content-[''] after:absolute after:left-0 after:bottom-0
-            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
-          "
+            after:h-[3px] after:w-0 after:bg-black after:transition-all after:rounded-full
+            ${pathname === '/shop' ? 'text-black font-bold text-lg after:w-full' : ''}
+          `}
         >
           Store
         </Link>
 
         <Link
           to="/blog"
-          className="
+          className={`
             relative inline-flex items-center h-10 leading-none
-            text-gray-700 hover:text-black
-            [&.active]:text-black [&.active]:after:w-full
+            text-gray-700 hover:text-black transition-all
             after:content-[''] after:absolute after:left-0 after:bottom-0
-            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
-          "
+            after:h-[3px] after:w-0 after:bg-black after:transition-all after:rounded-full
+            ${pathname === '/blog' ? 'text-black font-bold text-lg after:w-full' : ''}
+          `}
         >
           Blog
         </Link>
 
          <Link
           to="/albums"
-          className="
+          className={`
             relative inline-flex items-center h-10 leading-none
-            text-gray-700 hover:text-black
-            [&.active]:text-black [&.active]:after:w-full
+            text-gray-700 hover:text-black transition-all
             after:content-[''] after:absolute after:left-0 after:bottom-0
-            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
-          "
+            after:h-[3px] after:w-0 after:bg-black after:transition-all after:rounded-full
+            ${pathname === '/albums' ? 'text-black font-bold text-lg after:w-full' : ''}
+          `}
         >
           Albums
         </Link>
 
 
         <Link
-          to="/"
-          className="
+          to="/contact"
+          className={`
             relative inline-flex items-center h-10 leading-none
-            text-gray-700 hover:text-black
-            [&.active]:text-black [&.active]:after:w-full
+            text-gray-700 hover:text-black transition-all
             after:content-[''] after:absolute after:left-0 after:bottom-0
-            after:h-[2px] after:w-0 after:bg-red-500 after:transition-all
-          "
+            after:h-[3px] after:w-0 after:bg-black after:transition-all after:rounded-full
+            ${pathname === '/contact' ? 'text-black font-bold text-lg after:w-full' : ''}
+          `}
         >
           Contact
         </Link>
@@ -217,8 +217,8 @@ return (
 
       {/* Actions */}
       <div className="ml-auto flex items-center gap-2">
-        <SubNav items={subItems} title="more" />
-      </div>
+        <SubNav items={subItems}/>
+      </div> 
     </div>
   </nav>
 );

@@ -44,80 +44,167 @@ export default function Profile() {
         : user.avatar)
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || "User")}`;
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow p-4">
-        <h2 className="text-lg font-semibold mb-4">Settings</h2>
-        <ul className="space-y-2">
-          <li className="p-2 bg-blue-100 rounded">Profile</li>
-          <li className="p-2 hover:bg-gray-100 cursor-pointer">Account</li>
-          <li className="p-2 hover:bg-gray-100 cursor-pointer">Chat</li>
-          <li className="p-2 hover:bg-gray-100 cursor-pointer">Voice & video</li>
-          <li className="p-2 hover:bg-gray-100 cursor-pointer">Appearance</li>
-          <li className="p-2 hover:bg-gray-100 cursor-pointer">Notification</li>
-        </ul>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 p-8 bg-white shadow">
-        <div className="max-w-2xl">
-          <div className="flex items-center gap-6 mb-6">
-            <img
-              src={avatarSrc}
-              alt="Profile"
-              className="w-20 h-20 rounded-full border"
-            />
-            <div className="flex gap-2">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Change picture
-              </button>
-              <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                Delete picture
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Profile name</label>
-              <input
-                type="text"
-                defaultValue={user?.username || ""}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Username</label>
-              <input
-                type="text"
-                defaultValue={user?.username || ""}
-                disabled
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">Available change in 25/04/2024</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Status recently</label>
-              <input
-                type="text"
-                defaultValue={user?.status || ""}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">About me</label>
-              <textarea
-                defaultValue={user?.about || ""}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Profile Settings</h1>
+          <p className="text-gray-600">Manage your account settings and preferences</p>
         </div>
-      </main>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+          {/* Sidebar */}
+          <aside className="lg:sticky lg:top-24 h-fit">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200">
+                <h2 className="font-semibold text-gray-900">Settings</h2>
+              </div>
+              <nav className="p-2">
+                <button className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 font-semibold text-gray-900 transition">
+                  Profile
+                </button>
+                <button className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                  Account
+                </button>
+                <button className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                  Privacy
+                </button>
+                <button className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                  Notifications
+                </button>
+              </nav>
+              <div className="p-2 border-t border-gray-200">
+                <button 
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="space-y-6">
+            {/* Profile Picture */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h3>
+              <div className="flex items-center gap-6">
+                <img
+                  src={avatarSrc}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full border-4 border-gray-200 object-cover"
+                />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium">
+                    Change Picture
+                  </button>
+                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Information */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    defaultValue={user?.username || ""}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition"
+                    placeholder="Enter your display name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    defaultValue={user?.email || ""}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                    disabled
+                  />
+                  <p className="text-xs text-gray-500 mt-2">Email cannot be changed</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    defaultValue={user?.username || ""}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                    disabled
+                  />
+                  <p className="text-xs text-gray-500 mt-2">Username can be changed after 25/04/2024</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    defaultValue={user?.about || ""}
+                    rows="4"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition resize-none"
+                    placeholder="Tell us about yourself..."
+                  />
+                  <p className="text-xs text-gray-500 mt-2">Brief description for your profile</p>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+                <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+                  Cancel
+                </button>
+                <button className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+
+            {/* Account Stats */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Statistics</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900">0</p>
+                  <p className="text-sm text-gray-600 mt-1">Posts</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900">0</p>
+                  <p className="text-sm text-gray-600 mt-1">Products</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900">0</p>
+                  <p className="text-sm text-gray-600 mt-1">Followers</p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <p className="text-2xl font-bold text-gray-900">0</p>
+                  <p className="text-sm text-gray-600 mt-1">Following</p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

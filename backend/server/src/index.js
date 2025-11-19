@@ -17,7 +17,7 @@ import ProductCategoriesRoute from "./routes/productCategoriesRoute.js";
 import albumRoutes from "./routes/albumsRoute.js";
 import shopRoute from "./routes/shopRoute.js";
 
-dotenv.config();
+dotenv.config({path: "./.env"});
 if (!process.env.JWT_SECRET) {
   console.error("Missing JWT_SECRET in .env");
   process.exit(1);

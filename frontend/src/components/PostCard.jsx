@@ -67,4 +67,18 @@ const PostCard = ({ post }) => {
 
 export default PostCard;
 
+const AlbumCard = ({ album }) => {
+
+  return (
+    <div id="album-card" className="">  
+      <h2 className="text-2xl font-bold mb-4">{album.title}</h2>
+      <p className="text-gray-600">{album.description}</p>
+    </div>
+  );
+};
+
+export { AlbumCard };
+
+
+
 

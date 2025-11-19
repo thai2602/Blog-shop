@@ -57,7 +57,8 @@ export const listAlbums = async (req, res) => {
         .sort({ updatedAt: -1 })
         .skip((pageNum - 1) * limitNum)
         .limit(limitNum)
-        .select("name slug theme coverImage visibility updatedAt items")
+        .select("name slug theme coverImage visibility updatedAt items shopId")
+        .populate({ path: "items.product", select: "name price image images slug" })
         .lean(),
       Album.countDocuments(filter),
     ]);

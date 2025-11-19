@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import Product from '../models/products.js';
 import ensureShopOwner from '../utils/ensureShopOwner.js';
 import { isAuth } from '../middlewares/auth.js';
+import { getFileUrl } from '../utils/fileHelper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,7 +46,7 @@ router.post('/shop/:shopId', isAuth, upload.single('image'), async (req, res) =>
       isFeatured,
     } = req.body;
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    const imageUrl = req.file ? getFileUrl(`uploads/${req.file.filename}`) : '';
 
     const newProduct = new Product({
       shopId,
@@ -116,7 +117,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     // To protect this endpoint, uncomment:
     // await ensureShopOwner(shopId, req.user._id);
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    const imageUrl = req.file ? getFileUrl(`uploads/${req.file.filename}`) : '';
 
     const newProduct = new Product({
       shopId,
