@@ -181,4 +181,69 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
+// PATCH /products/:id
+router.patch('/:id', isAuth, upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    
+    // Check shop ownership
+    await ensureShopOwner(product.shopId, req.user._id);
+
+    const update = {};
+    const { name, description, details, price, quantity, category, isFeatured } = req.body;
+
+    if (name !== undefined) update.name = name;
+    if (description !== undefined) update.description = description;
+    if (details !== undefined) update.details = details;
+    if (price !== undefined) update.price = Number(price);
+    if (quantity !== undefined) update.quantity = Number(quantity);
+    if (category !== undefined) update.category = category;
+    if (isFeatured !== undefined) update.isFeatured = isFeatured === 'true' || isFeatured === true;
+    
+    if (req.file) {
+      update.image = getFileUrl(`uploads/${req.file.filename}`);
+    }
+
+    if (name) {
+      update.slug = slugify(name, { lower: true, strict: true });
+    }
+
+    const updated = await Product.findByIdAndUpdate(id, update, { new: true })
+      .populate('category', 'name slug');
+
+    res.json(updated);
+  } catch (error) {
+    if (['FORBIDDEN','SHOP_NOT_FOUND'].includes(error?.message)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    console.error('Error while updating product:', error);
+    res.status(500).json({ message: 'Error while updating product' });
+  }
+});
+
+// DELETE /products/:id
+router.delete('/:id', isAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    
+    // Check shop ownership
+    await ensureShopOwner(product.shopId, req.user._id);
+
+    await Product.findByIdAndDelete(id);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    if (['FORBIDDEN','SHOP_NOT_FOUND'].includes(error?.message)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    console.error('Error while deleting product:', error);
+    res.status(500).json({ message: 'Error while deleting product' });
+  }
+});
+
 export default router;

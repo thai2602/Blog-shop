@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import api from "../lib/api";
+import { useNavigate, useParams } from 'react-router-dom';
+import api, { getImageUrl } from "../lib/api";
 import { useToast } from '../components/ToastProvider';
+import defaultImg from '../assets/default-img.jpg';
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -17,15 +21,39 @@ const AddProduct = () => {
     category: '',
     isFeatured: false,
     image: null,
+    currentImage: ''
   });
 
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    api.get("/productCategories")
-      .then(res => setCategories(res.data))
-      .catch(err => console.error("Error loading categories:", err));
-  }, []);
+    Promise.all([
+      api.get(`/products/${slug}`),
+      api.get("/productCategories")
+    ])
+      .then(([productRes, catsRes]) => {
+        const product = productRes.data;
+        setFormData({
+          name: product.name || '',
+          description: product.description || '',
+          details: product.details || '',
+          price: product.price || '',
+          quantity: product.quantity || '',
+          category: product.category?._id || '',
+          isFeatured: product.isFeatured || false,
+          image: null,
+          currentImage: product.image || '',
+          productId: product._id
+        });
+        setCategories(catsRes.data);
+      })
+      .catch(err => {
+        console.error("Error loading product:", err);
+        addToast('Failed to load product', 'error');
+        navigate('/shop');
+      })
+      .finally(() => setLoading(false));
+  }, [slug, navigate, addToast]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,14 +73,9 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
 
-    const shopId = localStorage.getItem('shopId'); 
-
-    if (!shopId) {
-      addToast('Missing shopId! Please log in or select a shop.', 'error');
-      return;
-    }
-
+    setSubmitting(true);
     const data = new FormData();
     data.append('name', formData.name);
     data.append('description', formData.description);
@@ -64,20 +87,28 @@ const AddProduct = () => {
     if (formData.image) data.append('image', formData.image);
 
     try {
-      await api.post(`/products/shop/${shopId}`, data, {
+      await api.patch(`/products/${formData.productId}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      addToast('Product added successfully!', 'success');
-      navigate('/shop');
+      addToast('Product updated successfully!', 'success');
+      navigate(`/product/${slug}`);
     } catch (err) {
-      console.error('Error adding product:', err.response?.data || err.message);
-      addToast(err.response?.data?.message || 'Error sending product to server!', 'error');
+      console.error('Error updating product:', err);
+      addToast(err.response?.data?.message || 'Failed to update product', 'error');
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (loading) {
+    return <div className="max-w-3xl mx-auto p-6">Loading...</div>;
+  }
+
+  const displayImage = preview || (formData.currentImage ? getImageUrl(formData.currentImage) : defaultImg);
+
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add New Products</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <input
@@ -147,7 +178,6 @@ const AddProduct = () => {
               </option>
             ))}
           </select>
-
         </div>
 
         <div className="flex items-center gap-2">
@@ -164,25 +194,38 @@ const AddProduct = () => {
           <label className="block font-medium mb-1">Product photo</label>
           <input
             type="file"
-            name="image"                
+            name="image"
             accept="image/*"
             onChange={handleImageChange}
             className="w-full"
           />
-          {preview && (
-            <img src={preview} alt="Preview" className="mt-3 max-h-60 rounded-lg border" />
-          )}
+          <img 
+            src={displayImage} 
+            alt="Preview" 
+            className="mt-3 max-h-60 rounded-lg border"
+            onError={(e) => e.currentTarget.src = defaultImg}
+          />
         </div>
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200"
-        >
-          Add products
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition duration-200 disabled:opacity-50"
+          >
+            {submitting ? 'Updating...' : 'Update Product'}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(`/product/${slug}`)}
+            className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddProduct;
+export default EditProduct;

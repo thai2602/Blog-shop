@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../lib/api';
+import api, { getImageUrl } from '../lib/api';
 import defaultImg from '../assets/default-img.jpg';
-import { API_URL } from '../config';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -121,10 +120,7 @@ const Blog = () => {
 };
 
 const BlogCard = ({ post }) => {
-  const imgUrl = post.image
-    ? (post.image.startsWith('http') ? post.image : `${API_URL}${post.image}`)
-    : defaultImg;
-  console.log(imgUrl);
+  const imgUrl = post.image ? getImageUrl(post.image) : defaultImg;
   
   const dateStr = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString('en-US', {

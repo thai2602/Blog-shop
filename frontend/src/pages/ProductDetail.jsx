@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import defaultImg from '../assets/default-img.jpg';
 import RelatedProductsVertical from '../sub/RelatedProducts';
-import { API_URL } from '../config';
-import api from '../lib/api';
+import api, { getImageUrl } from '../lib/api';
 import ShopInfoCard from '../sub/ShopInfoCard';
+import { useToast } from '../components/ToastProvider';
 
 export default function ProductDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const { addToast } = useToast();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -19,6 +23,12 @@ export default function ProductDetail() {
         setLoading(true);
         const { data } = await api.get(`/products/${slug}`);
         setProduct(data);
+
+        // Check ownership
+        const shopId = localStorage.getItem('shopId');
+        if (shopId && String(data.shopId) === String(shopId)) {
+          setIsOwner(true);
+        }
 
         const { data: allProducts } = await api.get(`/products`);
         if (Array.isArray(allProducts)) {
@@ -41,6 +51,22 @@ export default function ProductDetail() {
       }
     })();
   }, [slug]);
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    setDeleting(true);
+    try {
+      await api.delete(`/products/${product._id}`);
+      addToast('Product deleted successfully', 'success');
+      navigate('/shop');
+    } catch (err) {
+      console.error('Delete failed:', err);
+      addToast(err?.response?.data?.message || 'Failed to delete product', 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -65,9 +91,7 @@ export default function ProductDetail() {
 
   if (!product) return null;
 
-  const imgUrl = product.image
-    ? (product.image.startsWith('http') ? product.image : `${API_URL}${product.image}`)
-    : defaultImg;
+  const imgUrl = product.image ? getImageUrl(product.image) : defaultImg;
 
   return (
 
@@ -87,7 +111,26 @@ export default function ProductDetail() {
 
 
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+            <div className="flex items-start justify-between mb-2">
+              <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+              {isOwner && (
+                <div className="flex gap-2">
+                  <Link
+                    to={`/product/${product.slug}/edit`}
+                    className="px-3 py-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 text-sm font-medium"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium disabled:opacity-50"
+                  >
+                    {deleting ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              )}
+            </div>
             <p className="mt-2 text-2xl font-semibold text-gray-900">
               {typeof product.price === 'number'
                 ? product.price.toLocaleString('en-US') + ' $'

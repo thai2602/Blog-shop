@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import defaultImg from "../assets/default-img.jpg";
-import { API_URL } from '../config';
+import { getImageUrl } from '../lib/api';
 
 const PostCard = ({ post }) => {
   if (!post) return null;
 
-  const imgUrl = post.image
-    ? (post.image.startsWith("http") ? post.image : `${API_URL}${post.image}`)
-    : defaultImg;
+  const imgUrl = post.image ? getImageUrl(post.image) : defaultImg;
 
   const dateStr = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString()

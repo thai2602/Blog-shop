@@ -182,8 +182,8 @@ const Shop = () => {
         {/* PRODUCTS */}
         <section className="min-w-0">
           <div className="inline-block justify-between w-full pr-4">
-            <div className='flex w-full justify-between mb-4'>
-              <h2 className="text-2xl font-bold">Products</h2>
+            <div className='flex w-full justify-between'>
+              <h2 className="flex items-center text-2xl font-bold">Products</h2>
               <div className= 'right-full'> <SubNav items={subItems} title='onclick'/> </div>
             </div>
             

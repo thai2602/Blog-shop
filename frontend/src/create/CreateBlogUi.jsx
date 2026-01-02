@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../lib/api";
+import { useToast } from '../components/ToastProvider';
 
 const CreateBlog = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [categories, setCategories] = useState([]);
   const [preview, setPreview] = useState(null);
@@ -62,16 +64,17 @@ const CreateBlog = () => {
 
       await api.post('/posts', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
-
       });
 
+      addToast('Post created successfully!', 'success');
       navigate('/blog'); 
     } catch (err) {
       const msg = err?.response?.data?.message || 'Error when submitting article';
       console.error(msg, err);
-      alert(msg.includes('duplicate') || msg.includes('11000')
+      const errorMsg = msg.includes('duplicate') || msg.includes('11000')
         ? 'Title already exists, please change to another title.'
-        : msg);
+        : msg;
+      addToast(errorMsg, 'error');
     } finally {
       setSubmitting(false);
     }

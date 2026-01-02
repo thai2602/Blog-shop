@@ -56,8 +56,8 @@ export default function Contact() {
 
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FaEnvelope className="text-red-600 text-xl" />
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <FaEnvelope className="text-orange-600 text-xl" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
@@ -67,8 +67,8 @@ export default function Contact() {
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FaPhone className="text-red-600 text-xl" />
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <FaPhone className="text-orange-600 text-xl" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
@@ -78,8 +78,8 @@ export default function Contact() {
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FaMapMarkerAlt className="text-red-600 text-xl" />
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <FaMapMarkerAlt className="text-orange-600 text-xl" />
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
@@ -173,7 +173,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full bg-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-700 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {status === 'sending' ? 'Sending...' : 'Send Message'}
             </button>

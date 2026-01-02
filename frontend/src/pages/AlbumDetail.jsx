@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAlbum, addProducts, reorder } from "../lib/albumsApi.js";
-import toAbsUrl from "../lib/toAbsUrl.js";
-import defaultImg from "../assets/default-img.jpg"
 import { ProductCardAlbum } from "../components/ProductCard.jsx";
+import { ArticleSection, ArticleParagraph, ArticleImage } from "../components/ArticleTemplate";
 
 export default function AlbumDetail(props) {
   const params = useParams();
@@ -79,32 +78,53 @@ export default function AlbumDetail(props) {
   // );
 
   return (
-    <div className="p-4 max-w-5xl mx-auto bg-white rounded shadow-sm">
-      <h1 className="text-2xl font-bold">{album.name}</h1>
-      {album.description && <p className="text-gray-600">{album.description}</p>}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Header Section */}
+        <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">{album.name}</h1>
+          {album.description && (
+            <p className="text-gray-600 text-lg mb-6">{album.description}</p>
+          )}
 
-      {/* Add products quickly 
-      <div className="mt-4 flex gap-2">
-        <input
-          value={newIds}
-          onChange={(e) => setNewIds(e.target.value)}
-          placeholder="Nhập productIds, phân tách bằng dấu phẩy"
-          className="rounded-md px-3 py-2 border flex-1"
-        />
-        <button className="px-4 py-2 rounded-md border" onClick={onAdd}>
-          Add Product
-        </button>
+          {/* Cover Image */}
+          {album.coverImage && (
+            <div className="mt-6 rounded-lg overflow-hidden">
+              <ArticleImage 
+                src={album.coverImage} 
+                alt={album.name}
+                className="mb-0"
+              />
+            </div>
+          )}
+
+          {/* Intro Content */}
+          <div className="mt-6 space-y-4 text-gray-700">
+            <ArticleParagraph className="mb-4">
+              This curated collection brings together {album.items?.length || 0} carefully selected items 
+              that showcase unique design and quality craftsmanship. Each product has been chosen to complement 
+              the overall theme and aesthetic of this album.
+            </ArticleParagraph>
+            
+            <ArticleParagraph className="mb-0">
+              Explore the collection below to discover products that inspire creativity and reflect 
+              the vision behind this carefully curated selection. Every item tells a part of the story.
+            </ArticleParagraph>
+          </div>
+        </div>
+
+        {err && <div className="mb-4 text-sm text-red-600 bg-red-50 p-4 rounded-lg">{err}</div>}
+
+        {/* Products Grid */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Collection Items</h2>
+          <ul className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {album.items?.map((i) => (
+              <ProductCardAlbum key={i.product._id} p={i.product} />
+            ))}
+          </ul>
+        </div>
       </div>
-      */}
-
-      {err && <div className="mt-3 text-sm text-red-600">{err}</div>}
-
-      <ul className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {album.items?.map((i) => (
-          <ProductCardAlbum key={i.product._id} p={i.product} />
-        ))}
-      </ul>
-
     </div>
   );
 }

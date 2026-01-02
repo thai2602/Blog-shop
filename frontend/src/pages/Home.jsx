@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
-import { API_URL } from "../config";
-import api from "../lib/api";                
+import api, { getImageUrl } from "../lib/api";                
 
 import defaultBG from "../assets/backrough-default.jpg";
 import defaultImg from "../assets/default-img.jpg";
@@ -260,9 +259,9 @@ const Home = () => {
               to="/contact"
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
             >
-              <div className="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-red-200 transition">
+              <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-200 transition">
                 <svg
-                  className="w-8 h-8 text-red-600"
+                  className="w-8 h-8 text-orange-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -279,7 +278,7 @@ const Home = () => {
               <p className="text-gray-600 mb-4">
                 Get in touch with us for support, questions, or partnerships
               </p>
-              <span className="inline-flex items-center text-red-600 font-semibold group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-orange-600 font-semibold group-hover:gap-2 transition-all">
                 Contact Us
                 <svg
                   className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform"
@@ -415,11 +414,7 @@ const Home = () => {
           >
             {Array.isArray(products) &&
               products.map((p, idx) => {
-                const imgSrc = p?.image
-                  ? (String(p.image).startsWith("http")
-                      ? p.image
-                      : joinUrl(API_URL, p.image))
-                  : defaultImg;
+                const imgSrc = p?.image ? getImageUrl(p.image) : defaultImg;
                 const slug = p?.slug || p?._id || p?.id;
 
                 return (
@@ -471,11 +466,7 @@ const Home = () => {
             >
               {Array.isArray(visiblePosts) &&
                 visiblePosts.map((post, idx) => {
-                  const imgSrc = post?.image
-                    ? (String(post.image).startsWith("http")
-                        ? post.image
-                        : joinUrl(API_URL, post.image))
-                    : defaultImg;
+                  const imgSrc = post?.image ? getImageUrl(post.image) : defaultImg;
 
                   return (
                     <div

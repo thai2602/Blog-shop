@@ -179,4 +179,25 @@ router.patch('/:id', isAuth, async (req, res) => {
   }
 });
 
+// DELETE /posts/:id
+router.delete('/:id', isAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    // Check if user is the owner
+    if (String(post.userId) !== String(req.user._id)) {
+      return res.status(403).json({ message: 'You can only delete your own posts' });
+    }
+
+    await Post.findByIdAndDelete(id);
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error while deleting post:', error);
+    res.status(500).json({ message: 'Error while deleting post' });
+  }
+});
+
 export default router;

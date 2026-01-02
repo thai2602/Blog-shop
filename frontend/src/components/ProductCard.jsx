@@ -1,6 +1,6 @@
-import { API_URL } from "../config"
 import defaultImg from "../assets/default-img.jpg"
 import { Link } from "react-router-dom";
+import { getImageUrl } from "../lib/api";
 
 export default function ProductCard ({ p }) {
 
@@ -21,7 +21,7 @@ export default function ProductCard ({ p }) {
         >
             <div className="relative aspect-[4/3] overflow-hidden">
             <img
-                src={p.image ? `${API_URL}${p.image}` : defaultImg}
+                src={p.image ? getImageUrl(p.image) : defaultImg}
                 alt={p.name}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             />
@@ -55,7 +55,7 @@ export function ProductCardAlbum ({ p }) {
         >
             <div className="relative aspect-[4/3] overflow-hidden">
             <img
-                src={p.image ? `${API_URL}${p.image}` : defaultImg}
+                src={p.image ? getImageUrl(p.image) : defaultImg}
                 alt={p.name}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             />

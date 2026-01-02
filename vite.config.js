@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
+        //proxy api load 
+        '/uploads': {
+          target: API_URL,
+          changeOrigin: true,
+        },
       },
     },
   }

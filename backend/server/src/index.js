@@ -16,6 +16,7 @@ import postCategories from "./routes/postCategoriesRoute.js";
 import ProductCategoriesRoute from "./routes/productCategoriesRoute.js";
 import albumRoutes from "./routes/albumsRoute.js";
 import shopRoute from "./routes/shopRoute.js";
+import commentsRouter from "./routes/comments.js";
 
 dotenv.config({path: "./.env"});
 if (!process.env.JWT_SECRET) {
@@ -69,7 +70,8 @@ app.use("/users", userRoutes);
 app.use("/categories", postCategories);
 app.use("/productCategories", ProductCategoriesRoute);
 app.use("/albums", albumRoutes);
-app.use("/shop", shopRoute)
+app.use("/shop", shopRoute);
+app.use("/comments", commentsRouter);
 
 
 app.use((err, req, res, next) => {

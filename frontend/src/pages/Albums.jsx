@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { listAlbums } from '../lib/albumsApi';
-import api from '../lib/api';
+import api, { getImageUrl } from '../lib/api';
 import defaultImg from '../assets/default-img.jpg';
-import { API_URL } from '../config';
 
 const Albums = () => {
   const [albums, setAlbums] = useState([]);
@@ -55,10 +54,22 @@ const Albums = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm rounded-xl">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Albums</h1>
-          <p className="text-gray-600">Explore curated collections from creative shops</p>
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">Albums</h1>
+          <p className="text-lg text-gray-600 mb-6">Explore curated collections from creative shops</p>
+          
+          {/* Intro Content */}
+          <div className="mt-6 space-y-4 text-gray-700 max-w-4xl">
+            <p className="leading-relaxed">
+              Discover unique collections curated by talented creators and shop owners. Each album tells 
+              a story through carefully selected products that reflect passion, creativity, and craftsmanship.
+            </p>
+            <p className="leading-relaxed">
+              From minimalist designs to vibrant collections, our albums showcase the best of what our 
+              creative community has to offer. Click on any album to explore the full collection.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -130,9 +141,7 @@ const AlbumCard = ({ album, shop }) => {
   const albumData = fullAlbum || album;
 
   // Use coverImage as primary image source
-  const coverImage = albumData.coverImage 
-    ? (albumData.coverImage.startsWith('http') ? albumData.coverImage : `${API_URL}${albumData.coverImage}`)
-    : null;
+  const coverImage = albumData.coverImage ? getImageUrl(albumData.coverImage) : null;
 
   // Get products from album.items (should be populated in fullAlbum)
   const products = (albumData.items || [])
@@ -155,7 +164,7 @@ const AlbumCard = ({ album, shop }) => {
   products.forEach(p => {
     const img = p.image || p.images?.[0];
     if (img) {
-      const fullUrl = img.startsWith('http') ? img : `${API_URL}${img}`;
+      const fullUrl = getImageUrl(img);
       if (!images.includes(fullUrl)) {
         images.push(fullUrl);
       }
@@ -193,9 +202,7 @@ const AlbumCard = ({ album, shop }) => {
     return () => clearInterval(interval);
   }, [isHovered, imageCount]);
 
-  const shopAvatar = shop?.avatar
-    ? (shop.avatar.startsWith('http') ? shop.avatar : `${API_URL}${shop.avatar}`)
-    : defaultImg;
+  const shopAvatar = shop?.avatar ? getImageUrl(shop.avatar) : defaultImg;
 
   // Use shopId from fullAlbum if available, otherwise from album
   const shopId = fullAlbum?.shopId || album.shopId;

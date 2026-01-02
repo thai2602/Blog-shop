@@ -1,7 +1,10 @@
+import api from "../lib/api";
+
 export const fetchPosts = async () => {
-  const response = await fetch("http://localhost:5000/posts");
-  if (!response.ok) {
+  try {
+    const { data } = await api.get("/posts");
+    return data;
+  } catch (error) {
     throw new Error("Failed to fetch posts");
   }
-  return response.json();
 };

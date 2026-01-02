@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom'; 
+import { useParams, Link, useNavigate } from 'react-router-dom'; 
 import defaultImg from '../assets/default-img.jpg';
 import RelatedBlogsVertical from '../sub/RelatedBlog';
 import UserInfoCard from '../sub/UserInfoCard';
+import CommentSection from '../components/CommentSection';
+import { useToast } from '../components/ToastProvider';
 
 import api from '../lib/api';
 import toAbsUrl from '../lib/toAbsUrl';
@@ -10,10 +12,14 @@ import TagShopButton from '../components/TagShopButton';
 
 export default function BlogDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const { addToast } = useToast();
   const [post, setPost] = useState(null);
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [user, setUser] = useState(null); 
   const fetchPost = async () => {
     try {
       setLoading(true);
@@ -40,7 +46,36 @@ export default function BlogDetail() {
 
   useEffect(() => {
     fetchPost();
+    checkAuth();
   }, [slug]);
+
+  const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUser(payload);
+      } catch (e) {
+        console.error('Invalid token');
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this post?')) return;
+    
+    setDeleting(true);
+    try {
+      await api.delete(`/posts/${post._id}`);
+      addToast('Post deleted successfully', 'success');
+      navigate('/blog');
+    } catch (err) {
+      console.error('Delete failed:', err);
+      addToast(err?.response?.data?.message || 'Failed to delete post', 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (error) return <p className="text-red-500">{error}</p>;
   if (loading || !post) return <p>Loading...</p>;
@@ -82,7 +117,26 @@ export default function BlogDetail() {
         </div>
 
         <div className="p-6">
-          <h1 className="text-2xl font-semibold tracking-tight">{post.title}</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-semibold tracking-tight">{post.title}</h1>
+            {user && (user.id === post.userId._id || user._id === post.userId._id) && (
+              <div className="flex gap-2">
+                <Link
+                  to={`/blog/${post.slug}/edit`}
+                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 text-sm font-medium"
+                >
+                  Edit Post
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium disabled:opacity-50"
+                >
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            )}
+          </div>
           <article className="prose max-w-none prose-p:my-4 prose-img:rounded-lg mt-4 text-gray-800">
             <p className="whitespace-pre-line">{post.content}</p>
           </article>
@@ -107,6 +161,11 @@ export default function BlogDetail() {
           )}
 
           <TagShopButton postId={post._id} onDone={fetchPost} />
+        </div>
+
+        {/* Comment Section */}
+        <div className="px-6 pb-6">
+          <CommentSection postId={post._id} />
         </div>
       </div>
 
