@@ -28,21 +28,48 @@ Create a `.env` file before running the project.
 - `VITE_API_BASE` → API base URL (default: http://localhost:5000)
 
 ## Running the Project
-- BE: node ./sever/src/index.js
+- BE: npm run server
 - FE: npm run dev
 
 ## Project Structure
 ```
-/sever
-   /models
-   /routes
-   db.js
-   index.js
-/src
-   /blog-create
-   /components
-   /pages
-   /sub
-   /users
+blog-shop/
+├── frontend/
+│   └── src/
+│       ├── components/      # Reusable components
+│       │   ├── Navbar.jsx
+│       │   ├── Footer.jsx
+│       │   └── ProductCard.jsx
+│       ├── pages/          # Page components
+│       │   ├── Home.jsx
+│       │   ├── Shop.jsx
+│       │   ├── Blog.jsx
+│       │   ├── Albums.jsx
+│       │   └── Contact.jsx
+│       ├── users/          # User-related pages
+│       │   ├── login.jsx
+│       │   ├── register.jsx
+│       │   └── userprofile.jsx
+│       ├── create/         # Creation pages
+│       │   ├── CreateBlogUi.jsx
+│       │   ├── AddProducts.jsx
+│       │   └── CreateShop.jsx
+│       ├── lib/            # Utilities
+│       │   ├── api.js
+│       │   └── albumsApi.js
+│       └── sub/            # Sub-components
+│           └── Subnav.jsx
+│
+└── backend/
+    └── server/
+        └── src/
+            ├── controllers/    # Request handlers
+            ├── services/       # Business logic
+            ├── models/         # Database schemas
+            ├── routes/         # API routes
+            ├── middlewares/    # Custom middleware
+            ├── validators/     # Input validation
+            ├── utils/          # Helper functions
+            └── config/         # Configuration files
 
  
