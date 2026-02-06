@@ -2,9 +2,6 @@
 
 Blog-shop is a dedicated platform designed to empower small shop owners to showcase their passion in a professional and organized way. Unlike scattered social media posts, Blog-shop provides a centralized space to build trust and credibility with customers.
 
-- **Web Structure Map:** [View MindMap](https://mm.tt/map/3805660976?t=Dso4YpxEXG)
-- **Demo Video:** [Watch Demo](https://www.youtube.com/watch?v=SdHdY6wO_-I)
-
 Built with **React, Vite, Tailwind, Node.js, Express, MongoDB**.
 
 ## ✨ Features
