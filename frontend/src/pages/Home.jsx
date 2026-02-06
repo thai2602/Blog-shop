@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 
-import api, { getImageUrl } from "../lib/api";                
+import api, { getImageUrl } from "../lib/api";
 
 import defaultBG from "../assets/backrough-default.jpg";
 import defaultImg from "../assets/default-img.jpg";
@@ -92,7 +92,7 @@ const Home = () => {
     <div id="home-page" className="bg-white text-black min-h-screen">
       {/* HERO */}
       <section
-        className="relative h-[70vh] flex items-center justify-center"
+        className="relative h-[600px] flex items-center justify-center"
         style={{
           backgroundImage: `url(${defaultBG})`,
           backgroundSize: "cover",
@@ -259,9 +259,9 @@ const Home = () => {
               to="/contact"
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
             >
-              <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-200 transition">
+              <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-gray-200 transition">
                 <svg
-                  className="w-8 h-8 text-orange-600"
+                  className="w-8 h-8 text-gray-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -278,7 +278,7 @@ const Home = () => {
               <p className="text-gray-600 mb-4">
                 Get in touch with us for support, questions, or partnerships
               </p>
-              <span className="inline-flex items-center text-orange-600 font-semibold group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-gray-600 font-semibold group-hover:gap-2 transition-all">
                 Contact Us
                 <svg
                   className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform"
@@ -295,94 +295,6 @@ const Home = () => {
                 </svg>
               </span>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose BlogShop?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              A platform designed for creators, sellers, and storytellers
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Easy to Use
-              </h3>
-              <p className="text-gray-600">
-                Create your shop and start selling in minutes with our intuitive interface
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Community Driven
-              </h3>
-              <p className="text-gray-600">
-                Connect with other creators and grow your audience together
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg
-                  className="w-10 h-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Secure & Reliable
-              </h3>
-              <p className="text-gray-600">
-                Your data is safe with us. Focus on creating, we handle the rest
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -491,7 +403,7 @@ const Home = () => {
                           <Link
                             to={`/blog/${post.slug}`}
                             className="mt-4 inline-flex items-center rounded-full bg-white px-5 py-2 text-sm font-semibold text-black hover:bg-gray-200"
-                            >
+                          >
                             Read more
                           </Link>
                         )}
@@ -524,11 +436,10 @@ const Home = () => {
                       key={`dot-${i}`}
                       onClick={() => goTo(i)}
                       aria-label={`Go to slide ${i + 1}`}
-                      className={`pointer-events-auto h-2.5 rounded-full transition-all ${
-                        current === i
-                          ? "w-6 bg-white"
-                          : "w-2.5 bg-white/60 hover:bg-white/80"
-                      }`}
+                      className={`pointer-events-auto h-2.5 rounded-full transition-all ${current === i
+                        ? "w-6 bg-white"
+                        : "w-2.5 bg-white/60 hover:bg-white/80"
+                        }`}
                     />
                   ))}
                 </div>

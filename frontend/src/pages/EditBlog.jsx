@@ -7,7 +7,7 @@ export default function EditBlog() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
-  
+
   const [formData, setFormData] = useState({
     title: '',
     summary: '',
@@ -30,7 +30,7 @@ export default function EditBlog() {
         api.get(`/posts/${slug}`),
         api.get('/categories')
       ]);
-      
+
       const post = postRes.data;
       setFormData({
         title: post.title,
@@ -63,7 +63,7 @@ export default function EditBlog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.summary.trim() || !formData.content.trim()) {
       setError('Please fill in all required fields');
       return;
@@ -109,107 +109,108 @@ export default function EditBlog() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <h1 className="text-3xl font-bold mb-6">Edit Blog Post</h1>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-gray-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h1 className="text-3xl font-bold mb-6">Edit Blog Post</h1>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="Enter post title"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="Enter post title"
+              />
+            </div>
 
-          {/* Summary */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Summary <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              name="summary"
-              value={formData.summary}
-              onChange={handleChange}
-              rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-              placeholder="Brief summary of your post"
-            />
-          </div>
+            {/* Summary */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Summary <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="summary"
+                value={formData.summary}
+                onChange={handleChange}
+                rows="3"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                placeholder="Brief summary of your post"
+              />
+            </div>
 
-          {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Content <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              rows="12"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-              placeholder="Write your post content here..."
-            />
-          </div>
+            {/* Content */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Content <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="content"
+                value={formData.content}
+                onChange={handleChange}
+                rows="12"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                placeholder="Write your post content here..."
+              />
+            </div>
 
-          {/* Categories */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Categories <span className="text-red-500">*</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {categories.map(cat => (
-                <label
-                  key={cat._id}
-                  className={`px-4 py-2 rounded-lg border-2 cursor-pointer transition ${
-                    formData.categories.includes(cat._id)
+            {/* Categories */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categories <span className="text-red-500">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map(cat => (
+                  <label
+                    key={cat._id}
+                    className={`px-4 py-2 rounded-lg border-2 cursor-pointer transition ${formData.categories.includes(cat._id)
                       ? 'bg-orange-500 text-white border-orange-500'
                       : 'bg-white text-gray-700 border-gray-300 hover:border-orange-500'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.categories.includes(cat._id)}
-                    onChange={() => handleCategoryChange(cat._id)}
-                    className="hidden"
-                  />
-                  {cat.name}
-                </label>
-              ))}
+                      }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.includes(cat._id)}
+                      onChange={() => handleCategoryChange(cat._id)}
+                      className="hidden"
+                    />
+                    {cat.name}
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              {submitting ? 'Updating...' : 'Update Post'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`/blog/${slug}`)}
-              className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            {/* Actions */}
+            <div className="flex gap-4 pt-4">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex-1 px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                {submitting ? 'Updating...' : 'Update Post'}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(`/blog/${slug}`)}
+                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

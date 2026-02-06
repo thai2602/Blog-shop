@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../lib/api";
 import { useToast } from "../components/ToastProvider";
 
 export default function Register() {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [form, setForm] = useState({ username:"", email:"", password:"", confirmPassword:"" });
+  const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,31 +44,80 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
+            <p className="text-gray-600 mt-2">Join our community of creators</p>
+          </div>
 
-        <input name="username" placeholder="Username"
-          value={form.username} onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded" required />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <input
+                name="username"
+                value={form.username} onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent outline-none transition"
+                placeholder="johndoe"
+                required
+              />
+            </div>
 
-        <input type="email" name="email" placeholder="Email"
-          value={form.email} onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded" required />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email} onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent outline-none transition"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
 
-        <input type="password" name="password" placeholder="Password"
-          value={form.password} onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded" required />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={form.password} onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent outline-none transition"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={form.confirmPassword} onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent outline-none transition"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
 
-        <input type="password" name="confirmPassword" placeholder="Confirm Password"
-          value={form.confirmPassword} onChange={handleChange}
-          className="w-full p-2 mb-4 border rounded" required />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition disabled:opacity-50 mt-2"
+            >
+              {loading ? "Creating Account..." : "Sign Up"}
+            </button>
+          </form>
 
-        <button type="submit" disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white py-2 rounded">
-          {loading ? "Processing..." : "Register"}
-        </button>
-      </form>
+          <div className="mt-6 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="font-semibold text-black hover:underline">
+              Log in
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

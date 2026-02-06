@@ -25,35 +25,36 @@ const Blog = () => {
 
   const filteredPosts = selectedCategory
     ? posts.filter(post =>
-        post.categories?.some(cat => cat.slug === selectedCategory)
-      )
+      post.categories?.some(cat => cat.slug === selectedCategory)
+    )
     : posts;
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm rounded-xl">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-6 py-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Blog</h1>
           <p className="text-gray-600">Discover stories, tips, and insights from our community</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto   py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-20">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Categories</h2>
+            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-20 border border-gray-200">
+              <div className="border-b border-gray-200 w-full">
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Categories</h2>
+              </div>
               <ul className="space-y-2">
                 <li>
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition ${
-                      selectedCategory === null
-                        ? 'bg-gray-900 text-white font-semibold'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    className={`w-full text-left px-4 py-2 rounded-lg transition ${selectedCategory === null
+                      ? 'font-bold'
+                      : 'text-gray-700 hover:bg-gray-50 hover:border hover:border-gray-200'
+                      }`}
                   >
                     All Posts
                   </button>
@@ -62,11 +63,10 @@ const Blog = () => {
                   <li key={cat._id}>
                     <button
                       onClick={() => setSelectedCategory(cat.slug)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition ${
-                        selectedCategory === cat.slug
-                          ? 'bg-gray-900 text-white font-semibold'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition ${selectedCategory === cat.slug
+                        ? 'font-bold'
+                        : 'text-gray-700 hover:bg-gray-50 hover:border hover:border-gray-200'
+                        }`}
                     >
                       {cat.name}
                     </button>
@@ -80,8 +80,8 @@ const Blog = () => {
           <main className="flex-1">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
-                {selectedCategory 
-                  ? `${categories.find(c => c.slug === selectedCategory)?.name || selectedCategory}` 
+                {selectedCategory
+                  ? `${categories.find(c => c.slug === selectedCategory)?.name || selectedCategory}`
                   : 'Latest Posts'}
               </h2>
               <p className="text-gray-600 mt-1">
@@ -121,13 +121,13 @@ const Blog = () => {
 
 const BlogCard = ({ post }) => {
   const imgUrl = post.image ? getImageUrl(post.image) : defaultImg;
-  
+
   const dateStr = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      })
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
     : '';
 
   return (
@@ -165,7 +165,7 @@ const BlogCard = ({ post }) => {
             {post.categories.slice(0, 3).map(cat => (
               <span
                 key={cat._id}
-                className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
+                className="px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-100"
               >
                 {cat.name}
               </span>

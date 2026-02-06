@@ -64,72 +64,72 @@ export default function CreateShop() {
     return true;
   };
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
     if (!validate()) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
-        addToast("You need to log in first", "error");
-        navigate("/login");
-        return;
+      addToast("You need to log in first", "error");
+      navigate("/login");
+      return;
     }
 
     setLoading(true);
     try {
-        const payload = {
+      const payload = {
         name: form.name.trim(),
         avatar: form.avatar.trim(),
         images: (form.images || []).map(s => s.trim()).filter(Boolean),
         description: form.description.trim(),
         contact: {
-            phone: form.contact.phone.trim(),
-            email: form.contact.email.trim(),
-            facebook: form.contact.facebook.trim(),
-            address: form.contact.address.trim(),
+          phone: form.contact.phone.trim(),
+          email: form.contact.email.trim(),
+          facebook: form.contact.facebook.trim(),
+          address: form.contact.address.trim(),
         },
-        };
+      };
 
-        const res = await api.post("/shop", payload, {
+      const res = await api.post("/shop", payload, {
         headers: { Authorization: `Bearer ${token}` },
-        });
+      });
 
-        addToast("Create shop successfully!", "success");
-        const created = res.data;
-        navigate(`/shop/${created._id}`);
-        return;
+      addToast("Create shop successfully!", "success");
+      const created = res.data;
+      navigate(`/shop/${created._id}`);
+      return;
     } catch (err) {
-        if (err.response?.status === 409) {
+      if (err.response?.status === 409) {
         const shopId = err.response.data?.shopId;
         if (shopId) {
-            addToast("You already have a shop, go to the shop page.", "info");
-            navigate(`/shop/${shopId}`);
-            return;
+          addToast("You already have a shop, go to the shop page.", "info");
+          navigate(`/shop/${shopId}`);
+          return;
         }
         try {
-            const me = await api.get("/shop/me", {
+          const me = await api.get("/shop/me", {
             headers: { Authorization: `Bearer ${token}` },
-            });
-            navigate(`/shop/${me.data._id}`);
-            return;
+          });
+          navigate(`/shop/${me.data._id}`);
+          return;
         } catch (e2) {
-            const msg = e2.response?.data?.message || "Cannot get existing shop";
-            addToast(msg, "error");
+          const msg = e2.response?.data?.message || "Cannot get existing shop";
+          addToast(msg, "error");
         }
-        } else {
+      } else {
         const msg = err.response?.data?.message || "Cannot create shop";
         addToast(msg, "error");
-        }
+      }
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    };
+  };
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-3xl mx-auto bg-white shadow rounded-xl p-6">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-50 py-8 px-4">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
         <h1 className="text-2xl font-bold mb-6">Create Shop</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">

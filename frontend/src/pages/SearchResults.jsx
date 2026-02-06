@@ -82,31 +82,28 @@ export default function SearchResults() {
         <div className="flex gap-2 mb-8 bg-white rounded-xl p-2 shadow-sm border border-gray-100">
           <button
             onClick={() => setActiveTab('all')}
-            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${
-              activeTab === 'all'
+            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${activeTab === 'all'
                 ? 'bg-gray-900 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
-            }`}
+              }`}
           >
             All <span className="ml-2 text-sm opacity-75">({totalResults})</span>
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${
-              activeTab === 'products'
+            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${activeTab === 'products'
                 ? 'bg-gray-900 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
-            }`}
+              }`}
           >
             Products <span className="ml-2 text-sm opacity-75">({results.products.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('posts')}
-            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${
-              activeTab === 'posts'
+            className={`flex-1 px-6 py-3 font-semibold rounded-lg transition-all ${activeTab === 'posts'
                 ? 'bg-gray-900 text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
-            }`}
+              }`}
           >
             Posts <span className="ml-2 text-sm opacity-75">({results.posts.length})</span>
           </button>
@@ -162,7 +159,7 @@ export default function SearchResults() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <div className="p-6 flex flex-col flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
                           {post.title}
                         </h3>
                         <p className="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed flex-1">
@@ -189,7 +186,7 @@ export default function SearchResults() {
                   No results found
                 </h3>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  We couldn't find anything matching "<span className="font-semibold">{query}</span>". 
+                  We couldn't find anything matching "<span className="font-semibold">{query}</span>".
                   Try different keywords or browse our collections.
                 </p>
                 <div className="flex gap-4 justify-center flex-wrap">

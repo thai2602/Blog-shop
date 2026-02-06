@@ -7,7 +7,7 @@ import { ArticleSection, ArticleParagraph, ArticleImage } from "../components/Ar
 export default function AlbumDetail(props) {
   const params = useParams();
   const shopId = props.shopId ?? params.shopId ?? params.id;
-  const slug   = props.slug   ?? params.slug;
+  const slug = props.slug ?? params.slug;
 
   const [album, setAlbum] = useState(null);
   const [newIds, setNewIds] = useState("");
@@ -42,7 +42,7 @@ export default function AlbumDetail(props) {
       const ids = newIds.split(",").map(s => s.trim()).filter(Boolean);
       if (ids.length === 0) return;
 
-      await addProducts(album._id, ids); 
+      await addProducts(album._id, ids);
       setNewIds("");
       await load();
     } catch (e) {
@@ -54,7 +54,7 @@ export default function AlbumDetail(props) {
   const onReorder = async () => {
     try {
       const ordered = album.items.map(i => i.product._id);
-      await reorder(album._id, ordered); 
+      await reorder(album._id, ordered);
       await load();
     } catch (e) {
       console.error("reorder error:", e);
@@ -67,8 +67,8 @@ export default function AlbumDetail(props) {
   }
 
   if (loading && !album) return <div className="p-4">Loading...</div>;
-  if (err && !album)     return <div className="p-4 text-red-600">{err}</div>;
-  if (!album)            return null;
+  if (err && !album) return <div className="p-4 text-red-600">{err}</div>;
+  if (!album) return null;
 
   // console.log(
   //   "items len =", album?.items?.length,
@@ -78,7 +78,7 @@ export default function AlbumDetail(props) {
   // );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header Section */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-6">
@@ -89,9 +89,9 @@ export default function AlbumDetail(props) {
 
           {/* Cover Image */}
           {album.coverImage && (
-            <div className="mt-6 rounded-lg overflow-hidden">
-              <ArticleImage 
-                src={album.coverImage} 
+            <div className="mt-6 rounded-lg overflow-hidden shadow-md">
+              <ArticleImage
+                src={album.coverImage}
                 alt={album.name}
                 className="mb-0"
               />
@@ -101,13 +101,13 @@ export default function AlbumDetail(props) {
           {/* Intro Content */}
           <div className="mt-6 space-y-4 text-gray-700">
             <ArticleParagraph className="mb-4">
-              This curated collection brings together {album.items?.length || 0} carefully selected items 
-              that showcase unique design and quality craftsmanship. Each product has been chosen to complement 
+              This curated collection brings together {album.items?.length || 0} carefully selected items
+              that showcase unique design and quality craftsmanship. Each product has been chosen to complement
               the overall theme and aesthetic of this album.
             </ArticleParagraph>
-            
+
             <ArticleParagraph className="mb-0">
-              Explore the collection below to discover products that inspire creativity and reflect 
+              Explore the collection below to discover products that inspire creativity and reflect
               the vision behind this carefully curated selection. Every item tells a part of the story.
             </ArticleParagraph>
           </div>

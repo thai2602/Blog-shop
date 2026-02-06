@@ -13,19 +13,19 @@ const Albums = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch albums
         const albumsData = await listAlbums(null, { page: 1, limit: 100 });
         const albumsList = albumsData?.items || [];
-        
+
         if (albumsList.length === 0) {
           setLoading(false);
           return;
         }
-        
+
         // Get unique shop IDs
         const shopIds = [...new Set(albumsList.map(a => a.shopId).filter(Boolean))];
-        
+
         // Fetch shop details for each album
         const shopsData = {};
         await Promise.all(
@@ -38,7 +38,7 @@ const Albums = () => {
             }
           })
         );
-        
+
         setShops(shopsData);
         setAlbums(albumsList);
       } catch (err) {
@@ -54,19 +54,19 @@ const Albums = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">Albums</h1>
           <p className="text-lg text-gray-600 mb-6">Explore curated collections from creative shops</p>
-          
+
           {/* Intro Content */}
           <div className="mt-6 space-y-4 text-gray-700 max-w-4xl">
             <p className="leading-relaxed">
-              Discover unique collections curated by talented creators and shop owners. Each album tells 
+              Discover unique collections curated by talented creators and shop owners. Each album tells
               a story through carefully selected products that reflect passion, creativity, and craftsmanship.
             </p>
             <p className="leading-relaxed">
-              From minimalist designs to vibrant collections, our albums showcase the best of what our 
+              From minimalist designs to vibrant collections, our albums showcase the best of what our
               creative community has to offer. Click on any album to explore the full collection.
             </p>
           </div>
@@ -89,9 +89,9 @@ const Albums = () => {
         ) : albums.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {albums.map(album => (
-              <AlbumCard 
-                key={album._id} 
-                album={album} 
+              <AlbumCard
+                key={album._id}
+                album={album}
                 shop={shops[album.shopId]}
               />
             ))}
@@ -118,12 +118,12 @@ const AlbumCard = ({ album, shop }) => {
       const hasPopulatedProducts = album.items?.some(
         item => typeof item.product === 'object' && item.product !== null
       );
-      
+
       if (hasPopulatedProducts && album.shopId) {
         setFullAlbum(album);
         return;
       }
-      
+
       // Otherwise fetch full album details
       try {
         const res = await api.get(`/albums/${album._id}`);
@@ -133,7 +133,7 @@ const AlbumCard = ({ album, shop }) => {
         setFullAlbum(album); // Fallback to original album
       }
     };
-    
+
     fetchFullAlbum();
   }, [album._id, album.shopId, album.items]);
 
@@ -156,11 +156,11 @@ const AlbumCard = ({ album, shop }) => {
 
   // Build images array: coverImage first, then product images
   const images = [];
-  
+
   if (coverImage) {
     images.push(coverImage);
   }
-  
+
   products.forEach(p => {
     const img = p.image || p.images?.[0];
     if (img) {
@@ -206,21 +206,21 @@ const AlbumCard = ({ album, shop }) => {
 
   // Use shopId from fullAlbum if available, otherwise from album
   const shopId = fullAlbum?.shopId || album.shopId;
-  const albumLink = shopId 
+  const albumLink = shopId
     ? `/shop/${shopId}/albums/${album.slug || album._id}`
     : '#';
 
   return (
     <div
-      className="group bg-white rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden"
+      className="group bg-white rounded-xl shadow-sm hover:shadow-2xl hover:shadow-purple-100 hover:border-purple-200 border border-transparent transition-all duration-300 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
         setCurrentImageIndex(0);
       }}
     >
-      <Link 
-        to={albumLink} 
+      <Link
+        to={albumLink}
         className="block"
         onClick={(e) => {
           if (albumLink === '#') {
@@ -236,11 +236,10 @@ const AlbumCard = ({ album, shop }) => {
               src={img}
               alt={`${album.name} - ${idx + 1}`}
               onError={(e) => (e.currentTarget.src = defaultImg)}
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
-                idx === currentImageIndex
-                  ? 'opacity-100 scale-100'
-                  : 'opacity-0 scale-110'
-              } ${isHovered ? 'group-hover:scale-110' : ''}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${idx === currentImageIndex
+                ? 'opacity-100 scale-100'
+                : 'opacity-0 scale-110'
+                } ${isHovered ? 'group-hover:scale-110' : ''}`}
             />
           ))}
 
@@ -250,11 +249,10 @@ const AlbumCard = ({ album, shop }) => {
               {displayImages.map((_, idx) => (
                 <div
                   key={idx}
-                  className={`h-1.5 rounded-full transition-all ${
-                    idx === currentImageIndex
-                      ? 'w-6 bg-white'
-                      : 'w-1.5 bg-white/60'
-                  }`}
+                  className={`h-1.5 rounded-full transition-all ${idx === currentImageIndex
+                    ? 'w-6 bg-white'
+                    : 'w-1.5 bg-white/60'
+                    }`}
                 />
               ))}
             </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../lib/api";
-import { API_URL } from "../config"; 
+import { API_URL } from "../config";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -40,8 +40,8 @@ export default function Profile() {
 
   const avatarSrc = user?.avatar
     ? (user.avatar.startsWith('/uploads/')
-        ? `${API_URL}${user.avatar}`
-        : user.avatar)
+      ? `${API_URL}${user.avatar}`
+      : user.avatar)
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.username || "User")}`;
 
   const handleLogout = () => {
@@ -52,8 +52,8 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Profile Settings</h1>
           <p className="text-gray-600">Manage your account settings and preferences</p>
         </div>
@@ -82,7 +82,7 @@ export default function Profile() {
                 </button>
               </nav>
               <div className="p-2 border-t border-gray-200">
-                <button 
+                <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition font-medium"
                 >

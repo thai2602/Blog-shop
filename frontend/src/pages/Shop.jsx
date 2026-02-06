@@ -6,7 +6,7 @@ import { CiShop } from "react-icons/ci";
 import { TbCategory } from "react-icons/tb";
 import { BiSolidOffer } from "react-icons/bi";
 import { FaShippingFast } from "react-icons/fa";
-import api from "../lib/api";   
+import api from "../lib/api";
 
 import ProductCard from '../components/ProductCard';
 
@@ -55,7 +55,7 @@ const Shop = () => {
       default: return 'Sort By';
     }
   };
-  
+
   const subItems = [
     {
       name: (
@@ -64,37 +64,37 @@ const Shop = () => {
         </span>
       ),
       subMenu: [
-        <button 
+        <button
           onClick={() => setSortBy('price-low')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'price-low' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
           Price: Low to High
         </button>,
-        <button 
+        <button
           onClick={() => setSortBy('price-high')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'price-high' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
           Price: High to Low
         </button>,
-        <button 
+        <button
           onClick={() => setSortBy('newest')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'newest' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
           Newest First
         </button>,
-        <button 
+        <button
           onClick={() => setSortBy('oldest')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'oldest' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
           Oldest First
         </button>,
-        <button 
+        <button
           onClick={() => setSortBy('name-asc')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'name-asc' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
           Name: A to Z
         </button>,
-        <button 
+        <button
           onClick={() => setSortBy('name-desc')}
           className={`block w-full text-left px-4 py-2 text-sm transition ${sortBy === 'name-desc' ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
         >
@@ -119,14 +119,14 @@ const Shop = () => {
   return (
     <div id="shop-page" className="space-y-8">
       {/* Header */}
-      <div className="bg-white shadow-sm rounded-xl">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-6 py-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Store</h1>
           <p className="text-gray-600">Buy everything you want!</p>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+      <div className="max-w-7xl mx-auto px-6 grid gap-8 lg:grid-cols-[260px_1fr]">
         {/* SIDEBAR */}
         <aside className="lg:sticky lg:top-24">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -147,8 +147,8 @@ const Shop = () => {
                   <button
                     key={cat._id}
                     onClick={() => setSelectedCategory(cat.name)}
-                    className={`w-full text-left px-5 py-2.5 text-sm rounded-none hover:bg-gray-50
-                      ${selectedCategory === cat.name ? 'bg-gray-100 font-semibold text-gray-900' : 'text-gray-700'}`}
+                    className={`w-full text-left px-5 py-2.5 text-sm rounded-lg hover:bg-blue-50 hover:text-blue-600 transition
+                      ${selectedCategory === cat.name ? 'bg-blue-50 font-bold text-blue-700 shadow-sm' : 'text-gray-700'}`}
                   >
                     {cat.name}
                   </button>
@@ -184,9 +184,9 @@ const Shop = () => {
           <div className="inline-block justify-between w-full pr-4">
             <div className='flex w-full justify-between'>
               <h2 className="flex items-center text-2xl font-bold">Products</h2>
-              <div className= 'right-full'> <SubNav items={subItems} title='onclick'/> </div>
+              <div className='right-full'> <SubNav items={subItems} title='onclick' /> </div>
             </div>
-            
+
             {selectedCategory && (
               <span className="text-sm text-gray-500">
                 Filter by: <span className="font-medium text-gray-700">{selectedCategory}</span>
@@ -204,12 +204,12 @@ const Shop = () => {
                 </div>
               ))}
             </div>
-          ) : sortedProducts.length > 0 ? (   
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {sortedProducts.map((p) => (
-                    <ProductCard key = {p._id} p = {p} />
-                  ))}
-              </div>
+          ) : sortedProducts.length > 0 ? (
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {sortedProducts.map((p) => (
+                <ProductCard key={p._id} p={p} />
+              ))}
+            </div>
           ) : (
             <div className="mt-12 text-center">
               <p className="text-gray-500 text-lg">No products found.</p>

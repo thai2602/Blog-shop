@@ -107,123 +107,125 @@ const EditProduct = () => {
   const displayImage = preview || (formData.currentImage ? getImageUrl(formData.currentImage) : defaultImg);
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>
+    <div className="min-h-screen bg-white shadow-lg rounded-xl p-6">
+      <div className="max-w-3xl mx-auto ">
+        <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <input
-          type="text"
-          name="name"
-          placeholder="Product name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <textarea
-          name="description"
-          placeholder="Short description"
-          value={formData.description}
-          onChange={handleChange}
-          rows="2"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <textarea
-          name="details"
-          placeholder="Product details"
-          value={formData.details}
-          onChange={handleChange}
-          rows="4"
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
+            type="text"
+            name="name"
+            placeholder="Product name"
+            value={formData.name}
             onChange={handleChange}
             required
             className="w-full p-2 border border-gray-300 rounded"
           />
 
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={formData.quantity}
+          <textarea
+            name="description"
+            placeholder="Short description"
+            value={formData.description}
             onChange={handleChange}
+            rows="2"
             required
             className="w-full p-2 border border-gray-300 rounded"
           />
-        </div>
 
-        <div>
-          <label className="block font-medium mb-1">Categories</label>
-          <select
-            name="category"
-            value={formData.category}
+          <textarea
+            name="details"
+            placeholder="Product details"
+            value={formData.details}
             onChange={handleChange}
-            required
+            rows="4"
             className="w-full p-2 border border-gray-300 rounded"
-          >
-            <option value="">Select category</option>
-            {categories.map(cat => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="isFeatured"
-            checked={formData.isFeatured}
-            onChange={handleChange}
           />
-          <label htmlFor="isFeatured" className="text-sm">Outstanding product</label>
-        </div>
 
-        <div>
-          <label className="block font-medium mb-1">Product photo</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full"
-          />
-          <img 
-            src={displayImage} 
-            alt="Preview" 
-            className="mt-3 max-h-60 rounded-lg border"
-            onError={(e) => e.currentTarget.src = defaultImg}
-          />
-        </div>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
 
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition duration-200 disabled:opacity-50"
-          >
-            {submitting ? 'Updating...' : 'Update Product'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(`/product/${slug}`)}
-            className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+            <input
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">Categories</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            >
+              <option value="">Select category</option>
+              {categories.map(cat => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="isFeatured"
+              checked={formData.isFeatured}
+              onChange={handleChange}
+            />
+            <label htmlFor="isFeatured" className="text-sm">Outstanding product</label>
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">Product photo</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full"
+            />
+            <img
+              src={displayImage}
+              alt="Preview"
+              className="mt-3 max-h-60 rounded-lg border"
+              onError={(e) => e.currentTarget.src = defaultImg}
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-200 disabled:opacity-50"
+            >
+              {submitting ? 'Updating...' : 'Update Product'}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/product/${slug}`)}
+              className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 transition duration-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

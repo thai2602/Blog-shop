@@ -46,7 +46,7 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const shopId = localStorage.getItem('shopId'); 
+    const shopId = localStorage.getItem('shopId');
 
     if (!shopId) {
       addToast('Missing shopId! Please log in or select a shop.', 'error');
@@ -76,111 +76,113 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add New Products</h2>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-50 p-6">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl">
+        <h2 className="text-2xl font-bold mb-6 text-center">Add New Products</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <input
-          type="text"
-          name="name"
-          placeholder="Product name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <textarea
-          name="description"
-          placeholder="Short description"
-          value={formData.description}
-          onChange={handleChange}
-          rows="2"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <textarea
-          name="details"
-          placeholder="Product details"
-          value={formData.details}
-          onChange={handleChange}
-          rows="4"
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
+            type="text"
+            name="name"
+            placeholder="Product name"
+            value={formData.name}
             onChange={handleChange}
             required
             className="w-full p-2 border border-gray-300 rounded"
           />
 
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantity"
-            value={formData.quantity}
+          <textarea
+            name="description"
+            placeholder="Short description"
+            value={formData.description}
             onChange={handleChange}
+            rows="2"
             required
             className="w-full p-2 border border-gray-300 rounded"
           />
-        </div>
 
-        <div>
-          <label className="block font-medium mb-1">Categories</label>
-          <select
-            name="category"
-            value={formData.category}
+          <textarea
+            name="details"
+            placeholder="Product details"
+            value={formData.details}
             onChange={handleChange}
-            required
+            rows="4"
             className="w-full p-2 border border-gray-300 rounded"
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+
+            <input
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">Categories</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded"
+            >
+              <option value="">Select category</option>
+              {categories.map(cat => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="isFeatured"
+              checked={formData.isFeatured}
+              onChange={handleChange}
+            />
+            <label htmlFor="isFeatured" className="text-sm">Outstanding product</label>
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">Product photo</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full"
+            />
+            {preview && (
+              <img src={preview} alt="Preview" className="mt-3 max-h-60 rounded-lg border" />
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-200"
           >
-            <option value="">Select category</option>
-            {categories.map(cat => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-
-        </div>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="isFeatured"
-            checked={formData.isFeatured}
-            onChange={handleChange}
-          />
-          <label htmlFor="isFeatured" className="text-sm">Outstanding product</label>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Product photo</label>
-          <input
-            type="file"
-            name="image"                
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full"
-          />
-          {preview && (
-            <img src={preview} alt="Preview" className="mt-3 max-h-60 rounded-lg border" />
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200"
-        >
-          Add products
-        </button>
-      </form>
+            Add products
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

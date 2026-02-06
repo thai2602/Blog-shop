@@ -13,7 +13,7 @@ export default function CreateAlbum({ onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const [products, setProducts] = useState([]); 
+  const [products, setProducts] = useState([]);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
@@ -23,13 +23,13 @@ export default function CreateAlbum({ onSuccess }) {
   const slugify = (text) =>
     text
       .toString()
-      .normalize("NFD") 
-      .replace(/[\u0300-\u036f]/g, "") 
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9\s-]/g, "") 
-      .replace(/\s+/g, "-") 
-      .replace(/-+/g, "-"); 
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
 
 
   useEffect(() => {
@@ -96,99 +96,101 @@ export default function CreateAlbum({ onSuccess }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">Tạo album mới</h1>
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-6">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+        <h1 className="text-2xl font-semibold mb-6">Create New Album</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-4 rounded-xl shadow">
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Album Name <span className="text-red-500">*</span></label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Hot Deals Summer Days"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
-          />
-        </div>
-
-        {/* Slug */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Slug (URL) <span className="text-gray-500 text-xs">auto generated from name, editable</span></label>
-          <input
-            type="text"
-            value={slug}
-            onChange={(e) => setSlug(slugify(e.target.value))}
-            placeholder="hot-deals-summer-days"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Describe</label>
-          <textarea
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Short description of the album..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
-          />
-        </div>
-
-        {/* Optional pick products */}
-        <div>
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium">Select product add now</label>
-            {loadingProducts && <span className="text-xs text-gray-500">Loading products...</span>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Album Name <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Ex: Hot Deals Summer Days"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
+            />
           </div>
 
-          <div className="max-h-56 overflow-auto mt-2 rounded border border-gray-200 divide-y">
-            {products?.length === 0 && !loadingProducts && (
-              <div className="p-3 text-sm text-gray-500">No products or downloads available.</div>
+          {/* Slug */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Slug (URL) <span className="text-gray-500 text-xs">auto generated from name, editable</span></label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => setSlug(slugify(e.target.value))}
+              placeholder="hot-deals-summer-days"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Describe</label>
+            <textarea
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Short description of the album..."
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-700"
+            />
+          </div>
+
+          {/* Optional pick products */}
+          <div>
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium">Select product add now</label>
+              {loadingProducts && <span className="text-xs text-gray-500">Loading products...</span>}
+            </div>
+
+            <div className="max-h-56 overflow-auto mt-2 rounded border border-gray-200 divide-y">
+              {products?.length === 0 && !loadingProducts && (
+                <div className="p-3 text-sm text-gray-500">No products or downloads available.</div>
+              )}
+              {products?.map((p) => (
+                <label key={p._id} className="flex items-center gap-3 p-3 text-sm hover:bg-gray-50">
+                  <input
+                    type="checkbox"
+                    checked={selectedProductIds.includes(p._id)}
+                    onChange={() => toggleSelect(p._id)}
+                  />
+                  <span className="line-clamp-1">{p.name} {p.price ? `— ${Number(p.price).toLocaleString()}₫` : ""}</span>
+                </label>
+              ))}
+            </div>
+            {selectedProductIds.length > 0 && (
+              <div className="text-xs text-gray-600 mt-1">Selected {selectedProductIds.length} products</div>
             )}
-            {products?.map((p) => (
-              <label key={p._id} className="flex items-center gap-3 p-3 text-sm hover:bg-gray-50">
-                <input
-                  type="checkbox"
-                  checked={selectedProductIds.includes(p._id)}
-                  onChange={() => toggleSelect(p._id)}
-                />
-                <span className="line-clamp-1">{p.name} {p.price ? `— ${Number(p.price).toLocaleString()}₫` : ""}</span>
-              </label>
-            ))}
           </div>
-          {selectedProductIds.length > 0 && (
-            <div className="text-xs text-gray-600 mt-1">Selected {selectedProductIds.length} products</div>
+
+          {/* Error */}
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {error}
+            </div>
           )}
-        </div>
 
-        {/* Error */}
-        {error && (
-          <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {error}
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={!canSubmit || isSubmitting}
+              className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
+            >
+              {isSubmitting ? "Creating..." : "Create albums"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="rounded-md border px-4 py-2"
+            >
+              Cancel
+            </button>
           </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={!canSubmit || isSubmitting}
-            className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
-          >
-            {isSubmitting ? "Creating..." : "Create albums"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="rounded-md border px-4 py-2"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

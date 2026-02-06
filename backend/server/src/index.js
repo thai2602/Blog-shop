@@ -17,8 +17,9 @@ import ProductCategoriesRoute from "./routes/productCategoriesRoute.js";
 import albumRoutes from "./routes/albumsRoute.js";
 import shopRoute from "./routes/shopRoute.js";
 import commentsRouter from "./routes/comments.js";
+import aiDesignRoutes from "./routes/aiDesignRoutes.js";
 
-dotenv.config({path: "./.env"});
+dotenv.config({ path: "./.env" });
 if (!process.env.JWT_SECRET) {
   console.error("Missing JWT_SECRET in .env");
   process.exit(1);
@@ -45,12 +46,12 @@ const corsOptions = {
     return ok ? cb(null, true) : cb(new Error("CORS blocked: " + origin));
   },
   credentials: true,
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization","ngrok-skip-browser-warning"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
 };
 
 const app = express();
-app.use(cors(corsOptions));  
+app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions), (req, res) => res.sendStatus(204));
 
 app.use(express.json());
@@ -72,6 +73,7 @@ app.use("/productCategories", ProductCategoriesRoute);
 app.use("/albums", albumRoutes);
 app.use("/shop", shopRoute);
 app.use("/comments", commentsRouter);
+app.use("/api/ai", aiDesignRoutes);
 
 
 app.use((err, req, res, next) => {
