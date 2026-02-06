@@ -70,7 +70,7 @@ To run the application locally, you need to start both the backend and frontend 
 ### Backend
 ```bash
 # In backend/server directory
-npm start
+npm start server
 ```
 
 ### Frontend
