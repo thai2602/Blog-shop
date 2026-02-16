@@ -6,7 +6,7 @@ function cleanStr(v) {
 }
 
 function isGoodUrlOrUploadPath(v) {
-  if (!v) return true; 
+  if (!v) return true;
   return v.startsWith("/uploads/") || /^https?:\/\//i.test(v);
 }
 
@@ -21,7 +21,7 @@ const shopSchema = new mongoose.Schema(
 
     avatar: {
       type: String,
-      set: cleanStr, 
+      set: cleanStr,
       validate: {
         validator: isGoodUrlOrUploadPath,
         message: "Avatar must be http(s) URL or start with /uploads/...",
@@ -41,9 +41,9 @@ const shopSchema = new mongoose.Schema(
     description: { type: String, set: cleanStr, default: "" },
 
     contact: {
-      phone:   { type: String, set: cleanStr, default: "" },
-      email:   { type: String, set: cleanStr, default: "" },
-      facebook:{ type: String, set: cleanStr, default: "" },
+      phone: { type: String, set: cleanStr, default: "" },
+      email: { type: String, set: cleanStr, default: "" },
+      facebook: { type: String, set: cleanStr, default: "" },
       address: { type: String, set: cleanStr, default: "" },
     },
 
@@ -59,11 +59,19 @@ const shopSchema = new mongoose.Schema(
         ref: "Product",
       }],
     }],
+
+    // AI Design
+    currentDesignConfig: { type: Object, default: {} },
+    designVersions: [{
+      name: { type: String, required: true, trim: true },
+      createdAt: { type: Date, default: Date.now },
+      config: { type: Object, required: true }
+    }],
   },
   { timestamps: true }
 );
 
-shopSchema.pre("save", function(next) {
+shopSchema.pre("save", function (next) {
   const fix = (v) => (isGoodUrlOrUploadPath(v) ? v : "");
   this.avatar = fix(this.avatar);
   if (Array.isArray(this.images)) {

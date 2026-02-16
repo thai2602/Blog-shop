@@ -1,5 +1,6 @@
 import React from 'react';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import api from "./lib/api";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -13,6 +14,7 @@ import Login from './users/login';
 import Register from './users/register';
 import Profile from './users/userprofile';
 import ShopHomePage from './pages/Shop-HomePage';
+import ShopDesignEditor from './pages/ShopDesignEditor';
 import ShopAlbums from './pages/shopAlbums';
 import AlbumDetail from './pages/AlbumDetail';
 import CreateShop from './create/CreateShop';
@@ -25,10 +27,35 @@ import EditProduct from './pages/EditProduct';
 
 
 //navigate to user shop
+//navigate to user shop
 function ShopHomeAlias() {
-  const shopId = localStorage.getItem('shopId');
-  if (!shopId) return <Navigate to="/shop" replace />;
-  return <Navigate to={`/shop/${shopId}`} replace />;
+  const [loading, setLoading] = React.useState(true);
+  const [shopId, setShopId] = React.useState(localStorage.getItem('shopId'));
+
+  React.useEffect(() => {
+    const check = async () => {
+      if (shopId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await api.get('/shop/me');
+        if (res.data && res.data._id) {
+          localStorage.setItem('shopId', res.data._id);
+          setShopId(res.data._id);
+        }
+      } catch (e) {
+        // ignore
+      } finally {
+        setLoading(false);
+      }
+    };
+    check();
+  }, [shopId]);
+
+  if (loading) return null;
+  if (shopId) return <Navigate to={`/shop/${shopId}`} replace />;
+  return <Navigate to="/shop/create" replace />;
 }
 
 function App() {
@@ -66,10 +93,12 @@ function App() {
               <Route path="/profile" element={<Profile />} />
 
               <Route path="/shop/:shopId" element={<ShopHomePage />} />
+              <Route path="/shop/:shopId/design" element={<ShopDesignEditor />} />
               <Route path="/shop/:shopId/albums" element={<ShopAlbums />} />
               <Route path="/shop/:shopId/albums/:slug" element={<AlbumDetail />} />
               <Route path="/shop/create" element={<CreateShop />} />
               <Route path="/shop/:shopId/albums/new" element={<CreateAlbum />} />
+              <Route path="/createAlbum" element={<CreateAlbum />} />
 
               <Route path="*" element={<div className="p-6 text-red-600">404 – Page not found</div>} />
             </Routes>

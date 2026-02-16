@@ -3,23 +3,32 @@ import axios from 'axios';
 import { API_URL } from '../../config/index';
 import './ChatBot.css';
 
-export default function ChatBot({ onUpdateDesign }) {
+export default function ChatBot({ onUpdateDesign, externalMessage }) {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleSend = async () => {
-        if (!input.trim()) return;
+    // Effect to handle external messages (e.g. from suggestions)
+    React.useEffect(() => {
+        if (externalMessage && !isTyping) {
+            setIsOpen(true);
+            handleSend(externalMessage);
+        }
+    }, [externalMessage]);
 
-        const userMsg = { role: 'user', text: input };
+    const handleSend = async (msgText = input) => {
+        const textToSend = msgText || input;
+        if (!textToSend.trim()) return;
+
+        const userMsg = { role: 'user', text: textToSend };
         setMessages(prev => [...prev, userMsg]);
         setIsTyping(true);
         setInput('');
 
         try {
             const res = await axios.post(`${API_URL}/api/ai/design-chat`, {
-                userRequest: input
+                userRequest: textToSend
             });
 
             const data = res.data;

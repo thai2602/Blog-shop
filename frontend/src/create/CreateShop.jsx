@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../lib/api";
+import api, { getImageUrl } from "../lib/api";
 import { useToast } from "../components/ToastProvider";
 
 export default function CreateShop() {
@@ -8,7 +8,7 @@ export default function CreateShop() {
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState(false);
-  const [imageInput, setImageInput] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     avatar: "",
@@ -24,8 +24,26 @@ export default function CreateShop() {
 
   useEffect(() => {
     const t = localStorage.getItem("token");
-    if (!t) navigate("/login");
-  }, [navigate]);
+    if (!t) {
+      navigate("/login");
+      return;
+    }
+
+    // Check if user already has a shop
+    const checkShop = async () => {
+      try {
+        const res = await api.get("/shop/me");
+        if (res.data && res.data._id) {
+          addToast("You already have a shop", "info");
+          navigate(`/shop/${res.data._id}`);
+        }
+      } catch (e) {
+        // If 404, it means no shop => user can create one.
+        // If other error, just log or ignore
+      }
+    };
+    checkShop();
+  }, [navigate, addToast]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -38,11 +56,45 @@ export default function CreateShop() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addImage = () => {
-    const url = imageInput.trim();
-    if (!url) return;
-    setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
-    setImageInput("");
+  const handleUpload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await api.post("/shop/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data.url;
+    } catch (err) {
+      console.error(err);
+      addToast("Upload failed", "error");
+      return null;
+    }
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const url = await handleUpload(file);
+    setUploading(false);
+    if (url) {
+      setForm((prev) => ({ ...prev, avatar: url }));
+    }
+  };
+
+  const handleAlbumChange = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setUploading(true);
+    const urls = [];
+    for (const file of files) {
+      const url = await handleUpload(file);
+      if (url) urls.push(url);
+    }
+    setUploading(false);
+    if (urls.length > 0) {
+      setForm((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
+    }
   };
 
   const removeImage = (idx) => {
@@ -97,6 +149,10 @@ export default function CreateShop() {
 
       addToast("Create shop successfully!", "success");
       const created = res.data;
+      if (created._id) {
+        localStorage.setItem("shopId", created._id);
+        // Also update local check if needed, but navigation will happen
+      }
       navigate(`/shop/${created._id}`);
       return;
     } catch (err) {
@@ -128,7 +184,7 @@ export default function CreateShop() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-50 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
         <h1 className="text-2xl font-bold mb-6">Create Shop</h1>
 
@@ -146,55 +202,48 @@ export default function CreateShop() {
             />
           </div>
 
-          {/* Avatar URL + preview */}
+          {/* Avatar Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Avatar (URL)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Avatar</label>
             <div className="flex gap-3 items-center">
               <input
-                name="avatar"
-                value={form.avatar}
-                onChange={onChange}
-                placeholder="https://..."
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={uploading}
                 className="flex-1 border rounded-md p-2"
               />
               {form.avatar ? (
                 <img
-                  src={form.avatar}
+                  src={getImageUrl(form.avatar)}
                   alt="avatar"
                   className="w-14 h-14 rounded-full object-cover border"
                   onError={(e) => (e.currentTarget.style.display = "none")}
                 />
               ) : null}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Bạn có thể điền URL ảnh. Nếu muốn upload file, hãy tạo endpoint upload và đổi sang FormData.
-            </p>
+            {uploading && <p className="text-xs text-blue-500 mt-1">Uploading...</p>}
           </div>
 
-          {/* Images list */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Album ảnh (URL)</label>
+          {/* Images list (Album) */}
+          {/* <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Album Pictures</label>
             <div className="flex gap-2">
               <input
-                value={imageInput}
-                onChange={(e) => setImageInput(e.target.value)}
-                placeholder="https://..."
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleAlbumChange}
+                disabled={uploading}
                 className="flex-1 border rounded-md p-2"
               />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Thêm
-              </button>
             </div>
             {form.images.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                 {form.images.map((url, idx) => (
                   <div key={idx} className="relative">
                     <img
-                      src={url}
+                      src={getImageUrl(url)}
                       alt={`img-${idx}`}
                       className="w-full h-28 object-cover rounded border"
                       onError={(e) => (e.currentTarget.style.display = "none")}
@@ -202,7 +251,7 @@ export default function CreateShop() {
                     <button
                       type="button"
                       onClick={() => removeImage(idx)}
-                      className="absolute top-1 right-1 px-2 py-1 text-xs bg-red-500 text-white rounded"
+                      className="absolute top-1 right-1 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Xoá
                     </button>
@@ -210,7 +259,7 @@ export default function CreateShop() {
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Mô tả */}
           <div>
@@ -274,10 +323,10 @@ export default function CreateShop() {
           <div className="flex items-center gap-3 pt-2">
             <button
               type="submit"
-              disabled={loading}
-              className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+              disabled={loading || uploading}
+              className="px-5 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 disabled:opacity-60"
             >
-              {loading ? "Creating..." : "Create shop"}
+              {loading ? "Creating..." : (uploading ? "Uploading..." : "Create shop")}
             </button>
             <button
               type="button"

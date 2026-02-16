@@ -76,8 +76,8 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-50 p-6">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl">
+    <div className="min-h-screen p-6">
+      <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl">
         <h2 className="text-2xl font-bold mb-6 text-center">Add New Products</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -177,7 +177,7 @@ const AddProduct = () => {
 
           <button
             type="submit"
-            className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-200"
+            className="bg-gray-700 text-white px-6 py-2 rounded-md hover:bg-gray-800 transition duration-200"
           >
             Add products
           </button>

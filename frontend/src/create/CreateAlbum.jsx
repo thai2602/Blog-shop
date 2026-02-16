@@ -5,7 +5,8 @@ import api from "../lib/api";
 
 export default function CreateAlbum({ onSuccess }) {
   const navigate = useNavigate();
-  const { shopId } = useParams();
+  const { shopId: paramShopId } = useParams();
+  const shopId = paramShopId || localStorage.getItem("shopId");
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -96,8 +97,8 @@ export default function CreateAlbum({ onSuccess }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-6">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+    <div className="min-h-screen p-6">
+      <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl">
         <h1 className="text-2xl font-semibold mb-6">Create New Album</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">

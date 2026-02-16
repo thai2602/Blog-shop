@@ -43,6 +43,9 @@ export default function Navbar() {
         <Link key="blog" className="block px-4 py-2 hover:bg-gray-100 text-gray-700" to="/createBlog">
           Create Blog
         </Link>,
+        <Link key="album" className="block px-4 py-2 hover:bg-gray-100 text-gray-700" to="/createAlbum">
+          Create Album
+        </Link>
       ],
     },
 

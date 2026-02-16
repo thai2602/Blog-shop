@@ -1,10 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
+import multer from "multer";
+import path from "path";
 import Shop from "../models/shop.js";
 import Product from "../models/products.js";
 import { isAuth, requireRole } from "../middlewares/auth.js";
+// import upload from "../middlewares/upload.js"; // Removed faulty import
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(process.cwd(), 'uploads');
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+});
+const upload = multer({ storage });
 
 /* ----------------------- helpers ----------------------- */
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
@@ -306,6 +318,110 @@ router.delete("/id/:id/albums/:albumId/products/:productId", isAuth, ownerOrAdmi
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+/* ----------------------- DESIGN VERSIONS ----------------------- */
+
+// Get all design versions
+router.get("/id/:id/design/versions", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidId(id)) return res.status(400).json({ message: "Invalid shop id" });
+    const shop = await Shop.findById(id).select("designVersions");
+    if (!shop) return res.status(404).json({ message: "Shop not found" });
+    res.json(shop.designVersions || []);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Save a new design version
+router.post("/id/:id/design/versions", isAuth, ownerOrAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, config } = req.body;
+
+    if (!config) return res.status(400).json({ message: "Design config is required" });
+
+    // Default name if not provided
+    const versionName = name && name.trim() ? name.trim() : `Version ${new Date().toLocaleString()}`;
+
+    const updated = await Shop.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          designVersions: {
+            name: versionName,
+            config: config
+          }
+        }
+      },
+      { new: true }
+    ).select("designVersions");
+
+    if (!updated) return res.status(404).json({ message: "Shop not found" });
+    // Return the newly added version (last one)
+    res.json(updated.designVersions[updated.designVersions.length - 1]);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update CURRENT active design (when user saves/applies changes)
+router.put("/id/:id/design/current", isAuth, ownerOrAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { config } = req.body;
+
+    if (!config) return res.status(400).json({ message: "Design config is required" });
+
+    const updated = await Shop.findByIdAndUpdate(
+      id,
+      { $set: { currentDesignConfig: config } },
+      { new: true }
+    ).select("currentDesignConfig");
+
+    if (!updated) return res.status(404).json({ message: "Shop not found" });
+    res.json(updated.currentDesignConfig);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete a version
+router.delete("/id/:id/design/versions/:versionId", isAuth, ownerOrAdmin, async (req, res) => {
+  try {
+    const { id, versionId } = req.params;
+    const updated = await Shop.findByIdAndUpdate(
+      id,
+      { $pull: { designVersions: { _id: versionId } } },
+      { new: true }
+    ).select("designVersions");
+
+    if (!updated) return res.status(404).json({ message: "Shop not found" });
+    res.json(updated.designVersions);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Upload a generic file (image) for design usage
+router.post("/upload", isAuth, upload.single("image"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    // Return relative path like in product upload
+    const url = `/uploads/${req.file.filename}`;
+    res.json({ url });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Upload failed" });
   }
 });
 
